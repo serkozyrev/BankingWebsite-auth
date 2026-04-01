@@ -258,7 +258,7 @@ export const AuthContextProvider = (props) => {
       tokenType: authTokenType,
       userId: uid,
       username:username,
-      expiration: tokenExpirationDate
+      expiration: tokenExpirationDate.toISOString()
     }))
   },[])
   useEffect(() => {
