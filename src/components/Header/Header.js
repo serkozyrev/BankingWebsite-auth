@@ -60,6 +60,7 @@ const Header = (props) => {
         <Navbar.Brand href="/">Home Bookkeeping</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
+          {!authCtx.authToken && (<strong>!!!Please login or sign up to start using the features of this website!!!</strong>)}
           {authCtx.authToken &&(<>
             <Nav
               className="me-auto my-2 my-lg-0"
