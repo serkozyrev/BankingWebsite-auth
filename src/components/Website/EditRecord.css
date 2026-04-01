@@ -1,0 +1,48 @@
+.control.invalid input {
+  border-color: red;
+  border-width: 2px;
+}
+
+.control.invalid textarea {
+  border-color: red;
+  border-width: 2px;
+}
+
+.control.invalid select {
+  border-color: red;
+  border-width: 2px;
+}
+
+.control {
+  margin-bottom: 15px;
+}
+
+.error-check {
+  margin-bottom: 25px;
+}
+
+.field {
+  border-radius: 10px;
+}
+.check {
+  padding-bottom: 5px;
+}
+
+.btn.login {
+  width: 160px;
+  height: 50px;
+  background-color: #258cc7;
+  color: white;
+  margin-top: 10px;
+}
+
+.editing {
+  background-color: rgb(127, 214, 255);
+  margin: 2rem auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  width: 560px;
+}

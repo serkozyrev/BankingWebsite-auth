@@ -1,0 +1,15 @@
+.navigation {
+  background-color: rgb(127, 214, 255);
+}
+
+.forgot_pass {
+  text-decoration: none;
+}
+
+.field{
+  margin-bottom: 10px;
+}
+
+.nav-bar{
+  align-items: end !important;
+}

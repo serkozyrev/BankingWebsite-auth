@@ -1,0 +1,45 @@
+body {
+  background-image: url(../../../images/847698.jpg);
+}
+
+.analysis-container {
+  padding: 1rem;
+  background-color: rgb(127, 214, 255);
+  margin: 2rem auto;
+  margin-top: 5rem;
+  width: 111rem;
+  height: 56rem;
+  max-width: 95%;
+  border-radius: 12px;
+  overflow-y: scroll;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.25);
+}
+
+.analysis-container::-webkit-scrollbar {
+  display: none;
+}
+
+.analysis {
+  margin-left: 30px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  width: 105em;
+}
+
+.analysis h3 {
+  margin-top: 20px;
+  margin-left: 63px;
+  padding: 1px 15px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  width: 100rem;
+  max-width: 95%;
+  height: 49rem;
+  overflow-y: scroll;
+  overflow: hidden;
+}

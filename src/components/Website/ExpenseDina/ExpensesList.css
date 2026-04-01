@@ -1,0 +1,24 @@
+.expenses-list {
+  list-style: none;
+  padding: 0;
+}
+
+.expenses-list::-webkit-scrollbar {
+  display: none;
+}
+
+.expenses-list__fallback {
+  color: white;
+  text-align: center;
+}
+
+.expenses-list h3 {
+  text-align: center;
+}
+
+.expenses-list.items {
+  flex-direction: column;
+  overflow-y: scroll;
+  padding: 6px;
+  height: 33rem;
+}

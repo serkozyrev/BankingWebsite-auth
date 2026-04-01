@@ -1,0 +1,25 @@
+.revenue-list {
+  list-style: none;
+  padding: 0;
+}
+
+.revenue-list::-webkit-scrollbar {
+  display: none;
+}
+
+.revenue-list__fallback {
+  list-style: none;
+  color: white;
+  text-align: center;
+}
+
+.revenue-list h3 {
+  text-align: center;
+}
+
+.revenue-list.items {
+  flex-direction: column;
+  overflow-y: scroll;
+  padding: 6px;
+  height: 33rem;
+}
