@@ -97,7 +97,42 @@ export const AuthContextProvider = (props) => {
 
   useEffect(() => {
       if(!authToken) return;
-      const fetchMovies = async () => {
+      const fetchRevenues = async () => {
+        try{
+          const myHeaders= new Headers()
+          myHeaders.append('Authorization', 'Bearer ' + authToken)
+          const requestOptions={
+                method:'GET',
+                headers:myHeaders
+            }
+          const response = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/revenue/all`, requestOptions
+          );
+    
+          if (!response.ok) {
+            const err = await response.json().catch(() => null);
+            console.log("fetch /revenue/all failed", response.status, err);
+            throw new Error(err?.detail || "Something went wrong!");
+          }
+          const responseData = await response.json();
+          // console.log('responseData', responseData)
+          setRevenuesList(responseData.revenues);
+          setAccountBalanceDina(responseData.account_info.visa);
+          setAccountBalanceMine(responseData.account_info.chequing); 
+          setAccountBalanceSnezhana(responseData.account_info.line_of_credit);
+        }
+        catch(error){
+          console.log("expense fetch error:", error)
+        }
+      };
+      
+      fetchRevenues()
+    }, [authToken]);
+
+  useEffect(() => {
+    if(!authToken) return;
+    const fetchExpenses = async () => {
+      try{
         const myHeaders= new Headers()
         myHeaders.append('Authorization', 'Bearer ' + authToken)
         const requestOptions={
@@ -105,54 +140,31 @@ export const AuthContextProvider = (props) => {
               headers:myHeaders
           }
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/revenue/all`, requestOptions
+          `${process.env.REACT_APP_BACKEND_URL}/expense/all`, requestOptions
         );
-  
+
         if (!response.ok) {
-          throw new Error("Something went wrong!");
+          const err = await response.json().catch(() => null);
+          console.log("fetch /expense/all failed", response.status, err);
+          throw new Error(err?.detail || "Something went wrong!");
         }
         const responseData = await response.json();
-        // console.log('responseData', responseData)
-        setRevenuesList(responseData.revenues);
+        setExpensesListDina(responseData.expensesVisa);
+        setExpensesList(responseData.expensesChequingLineOfCredit);
+        totalSum(responseData.totalChequing);
+        totalSumDina(responseData.totalVisa);
+        totalSumSnezhana(responseData.totalLineOfCredit);
         setAccountBalanceDina(responseData.account_info.visa);
         setAccountBalanceMine(responseData.account_info.chequing); 
         setAccountBalanceSnezhana(responseData.account_info.line_of_credit);
-      };
-      try {
-        fetchMovies().catch((error) => {});
-      } catch (err) {}
-    }, [authToken, authTokenType]);
-
-  useEffect(() => {
-    if(!authToken) return;
-    const fetchMovies = async () => {
-      const myHeaders= new Headers()
-      myHeaders.append('Authorization', 'Bearer ' + authToken)
-      const requestOptions={
-            method:'GET',
-            headers:myHeaders
-        }
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/expense/all`, requestOptions
-      );
-
-      if (!response.ok) {
-        throw new Error("Something went wrong!");
       }
-      const responseData = await response.json();
-      setExpensesListDina(responseData.expensesVisa);
-      setExpensesList(responseData.expensesChequingLineOfCredit);
-      totalSum(responseData.totalChequing);
-      totalSumDina(responseData.totalVisa);
-      totalSumSnezhana(responseData.totalLineOfCredit);
-      setAccountBalanceDina(responseData.account_info.visa);
-      setAccountBalanceMine(responseData.account_info.chequing); 
-      setAccountBalanceSnezhana(responseData.account_info.line_of_credit);
+      catch(error){
+        console.log("expense fetch error:", error)
+      }
     };
-    try {
-      fetchMovies().catch((error) => {});
-    } catch (err) {}
-  }, [authToken, authTokenType]);
+    
+    fetchExpenses()
+  }, [authToken]);
   const signIn = async(e)=>{
     e?.preventDefault();
 
