@@ -11,7 +11,7 @@ import "./EditRecord.css";
 const EditRecord = (props) => {
   const authCtx = useContext(AuthContext);
   const history = useNavigate();
-  const [providedAmount, setProvidedAmount] = useState("");
+  const [providedAmount, setProvidedAmount] = useState(0);
   const [validatedAmount, setValidAmount] = useState();
   const [providedDescription, setProvidedDescription] = useState("");
   const [validatedDescription, setValidDescription] = useState();
@@ -168,6 +168,7 @@ const EditRecord = (props) => {
             "revenue_balance": providedAmount,
             "date": providedDate,
             "category": providedCategory,
+            "account_type":providedAccount,
           }),
         }
         
@@ -256,13 +257,41 @@ const EditRecord = (props) => {
                 )}
               </div>
               {recordType === "revenue" && (
+                <div>
+                <div
+                  className={`control ${
+                    validatedAccount === false ? "invalid" : "check"
+                  }`}
+                >
+                  <h6 className="form-label" htmlFor="account">
+                    Type of Account
+                  </h6>
+                  <select
+                    id="gender"
+                    className="form-select field"
+                    value={providedAccount}
+                    onChange={accountHandler}
+                    onBlur={validateAccountHandler}
+                    required
+                  >
+                    <option defaultValue>Choose...</option>
+                    <option value="Chequing">Chequing</option>{/* PapaAccount */}
+                    <option value="Visa">Visa</option>{/* DinaAccount */}
+                    <option value="LineOfCredit">Line of Credit</option>{/* SnezhanaAccount */}
+                  </select>
+                  {validatedAccount === false && (
+                    <p className="error-check">
+                      Please, select type of account
+                    </p>
+                  )}
+                </div>
                 <div
                   className={`control ${
                     validatedCategory === false ? "invalid" : "check"
                   }`}
                 >
                   <h6 className="form-label" htmlFor="category">
-                    Revenue category
+                    Income Category
                   </h6>
                   <select
                     id="gender"
@@ -273,14 +302,23 @@ const EditRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    <option value="chequing">Deposit Chequing</option>
-                    <option value="visa">Deposit Visa</option>
+                    {(providedAccount==='Chequing')&& (<option value="salary">Salary</option>)}
+                    {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
+                      Transfer to Visa
+                    </option>)}
+                    {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
+                      Transfer to Line of Credit
+                    </option>)}
+                    {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
+                      Transfer to Chequing
+                    </option>)}
                   </select>
                   {validatedCategory === false && (
                     <p className="error-check">
-                      Please, choose type of revenue category
+                      Please, select income category
                     </p>
                   )}
+                </div>
                 </div>
               )}
               {recordType === "expense" && (

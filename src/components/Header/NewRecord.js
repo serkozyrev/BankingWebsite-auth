@@ -6,7 +6,7 @@ import "./NewRecord.css";
 
 const NewRecord = (props) => {
   const authCtx = useContext(AuthContext);
-  const [providedAmount, setProvidedAmount] = useState("");
+  const [providedAmount, setProvidedAmount] = useState(0);
   const [validatedAmount, setValidAmount] = useState();
   const [providedDescription, setProvidedDescription] = useState("");
   const [validatedDescription, setValidDescription] = useState();
@@ -18,6 +18,16 @@ const NewRecord = (props) => {
   const [validatedDate, setValidDate] = useState();
   const [providedAccount, setProvidedAccount] = useState("");
   const [validatedAccount, setValidAccount] = useState();
+  const [isChecked, setIsChecked] = useState(false)
+  const [aiAgentUserRequest, setAiAgentUserRequest]=useState("")
+
+  const handleIsChecked = ()=>{
+    setIsChecked(!isChecked)
+  }
+
+  const aiUserRequestHandler = (event) => {
+    setAiAgentUserRequest(event.target.value);
+  };
 
   const amountHandler = (event) => {
     setProvidedAmount(event.target.value);
@@ -73,45 +83,71 @@ const NewRecord = (props) => {
     const myHeaders= new Headers()
     myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
     myHeaders.append('Content-Type','application/json')
-    if(providedType==='revenue'){
-      console.log('test')
+    if(isChecked){
       const requestPostOptions={
-        method: "POST",
-        headers: myHeaders,
-        body: JSON.stringify({
-          "transaction_type": providedType,
-          "description": providedDescription,
-          "date": providedDate,
-          "category": providedCategory,
-          "revenue_balance": providedAmount,
-        }),
+          method: "POST",
+          headers: myHeaders,
+          body: JSON.stringify({
+            "description": providedDescription
+          }),
+        }
+        try{
+          const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/ai/parse-entry`, requestPostOptions)
+      
+          if(!res.ok){
+            const err=(await res).json().catch(()=>null)
+            throw new Error(err?.detail || "Failed to add record")
+          }
+          const data = await res.json()
+          props.dataFunc(data.message);
+
+          authCtx.closeModal();
+          props.infoBool();
+          console.log("data", data)
+          
+        }catch(e){
+          console.log(e)
+        }
+    }else{
+      if(providedType==='revenue'){
+        console.log('test')
+        const requestPostOptions={
+          method: "POST",
+          headers: myHeaders,
+          body: JSON.stringify({
+            "transaction_type": providedType,
+            "description": providedDescription,
+            "date": providedDate,
+            "category": providedCategory,
+            "revenue_balance": providedAmount,
+            "account_type": providedAccount
+          }),
+        }
+        try{
+          await postingNewRecord('revenue',requestPostOptions)
+        }catch(e){
+          console.log(e)
+        }
       }
-      try{
-        await postingNewRecord('revenue',requestPostOptions)
-      }catch(e){
-        console.log(e)
+      else{
+        const requestPostOptions={
+          method: "POST",
+          headers: myHeaders,
+          body: JSON.stringify({
+            "transaction_type": providedType,
+            "description": providedDescription,
+            "date": providedDate,
+            "category": providedCategory,
+            "expense_balance": providedAmount,
+          }),
+        }
+        try{
+          await postingNewRecord('expense',requestPostOptions)
+        }catch(e){
+          console.log(e)
+        }
       }
     }
-    else{
-      const requestPostOptions={
-        method: "POST",
-        headers: myHeaders,
-        body: JSON.stringify({
-          "transaction_type": providedType,
-          "description": providedDescription,
-          "date": providedDate,
-          "category": providedCategory,
-          "expense_balance": providedAmount,
-          "account_type": providedAccount,
-        }),
-      }
-      try{
-        await postingNewRecord('expense',requestPostOptions)
-      }catch(e){
-        console.log(e)
-      }
-    }
-    
   };
 
   const postingNewRecord= async(transactionType, requestPostOptions)=>{
@@ -142,16 +178,34 @@ const NewRecord = (props) => {
       }
       
   }
-
+  
   return (
     <form onSubmit={submitHandler}>
       <div className="mt-5 text-center">
         <h2>New Record into Account</h2>
         <p>
-          Please select revenue or expense and add description to this record.
-          When you finish, press Save. All fields should be filled.
+          Please select income or expense and add description to this record.
+          When you finish, press Save. All fields should be filled. 
+
+          {/* You can also check the box and right request to AI to create a record for you.
+          eg. "create income record for transfer from chequing to visa 115.26 with today date" */}
         </p>
-        <div className="d-flex justify-content-center">
+        {/* <div className="d-flex justify-content-center">
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="flexCheckDefault"
+              value={isChecked}
+              checked={isChecked}
+              onChange={handleIsChecked}
+            />
+            <label className="form-check-label" htmlFor="flexCheckDefault">
+              {isChecked ? "Checked" : "Unchecked"}
+            </label>
+          </div>
+        </div> */}
+        {!isChecked && (<div className="d-flex justify-content-center">
           <div className="col-8 mb-4 mt-3">
             <div
               className={`control ${
@@ -170,7 +224,7 @@ const NewRecord = (props) => {
                 required
               >
                 <option defaultValue>Choose...</option>
-                <option value="revenue">Revenue</option>
+                <option value="revenue">Deposits/Transfers</option>
                 <option value="expense">Expense</option>
               </select>
               {validatedType === false && (
@@ -204,11 +258,38 @@ const NewRecord = (props) => {
                 </div>
                 <div
                   className={`control ${
+                    validatedAccount === false ? "invalid" : "check"
+                  }`}
+                >
+                  <h6 className="form-label" htmlFor="account">
+                    Type of Account
+                  </h6>
+                  <select
+                    id="gender"
+                    className="form-select field"
+                    value={providedAccount}
+                    onChange={accountHandler}
+                    onBlur={validateAccountHandler}
+                    required
+                  >
+                    <option defaultValue>Choose...</option>
+                    <option value="Chequing">Chequing</option>{/* PapaAccount */}
+                    <option value="Visa">Visa</option>{/* DinaAccount */}
+                    <option value="LineOfCredit">Line of Credit</option>{/* SnezhanaAccount */}
+                  </select>
+                  {validatedAccount === false && (
+                    <p className="error-check">
+                      Please, select type of account
+                    </p>
+                  )}
+                </div>
+                <div
+                  className={`control ${
                     validatedCategory === false ? "invalid" : "check"
                   }`}
                 >
                   <h6 className="form-label" htmlFor="category">
-                    Revenue category
+                    Income Category
                   </h6>
                   <select
                     id="gender"
@@ -219,16 +300,24 @@ const NewRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    <option value="chequing">Deposit Chequing</option>{/* pensionPapa*/}
-                    <option value="visa">Deposit Visa</option>{/* pensionDina*/}
-                    <option value="lineofcredit">Deposit Line of Credit</option>{/* pensionDina*/}
+                    {(providedAccount==='Chequing')&& (<option value="salary">Salary</option>)}
+                    {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
+                      Transfer to Visa
+                    </option>)}
+                    {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
+                      Transfer to Line of Credit
+                    </option>)}
+                    {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
+                      Transfer to Chequing
+                    </option>)}
                   </select>
                   {validatedCategory === false && (
                     <p className="error-check">
-                      Please, choose type of revenue category
+                      Please, select income category
                     </p>
                   )}
                 </div>
+                
                 <div
                   className={`control ${
                     validatedAmount === false ? "invalid" : "check"
@@ -282,7 +371,7 @@ const NewRecord = (props) => {
                     validatedDate === false ? "invalid" : "check"
                   }`}
                 >
-                  <h6 className="form-label" htmlFor="description">
+                  <h6 className="form-label" htmlFor="date">
                     Record Date
                   </h6>
                   <input
@@ -305,7 +394,7 @@ const NewRecord = (props) => {
                     validatedAccount === false ? "invalid" : "check"
                   }`}
                 >
-                  <h6 className="form-label" htmlFor="description">
+                  <h6 className="form-label" htmlFor="account">
                     Type of Account
                   </h6>
                   <select
@@ -332,7 +421,7 @@ const NewRecord = (props) => {
                     validatedCategory === false ? "invalid" : "check"
                   }`}
                 >
-                  <h6 className="form-label" htmlFor="description">
+                  <h6 className="form-label" htmlFor="category">
                     Type of expense
                   </h6>
                   <select
@@ -344,16 +433,7 @@ const NewRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    <option value="grocery">Grocery</option>
-                    {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
-                      Transfer to Visa
-                    </option>)}
-                    {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
-                      Transfer to Line of Credit
-                    </option>)}
-                    {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
-                      Transfer to Chequing
-                    </option>)}
+                    <option value="grocery">Grocery</option>                    
                     <option value="utilitiesPayment">Utilities</option>
                     <option value="otherPayment">Other Payments</option>
                     <option value="medicine">Medicine</option>
@@ -411,7 +491,34 @@ const NewRecord = (props) => {
               </div>
             )}
           </div>
-        </div>
+        </div>)}
+        {isChecked &&(
+          <div className="d-flex justify-content-center">
+            <div className="col-8 mb-4 mt-3">
+              <div
+                  className={`control ${
+                    validatedDescription === false ? "invalid" : "check"
+                  }`}
+                >
+                  <h6 className="form-label" htmlFor="description">
+                    Description{" "}
+                  </h6>
+                  <textarea
+                    rows="3"
+                    id="description"
+                    className="form-control field"
+                    value={providedDescription}
+                    onChange={descriptionHandler}
+                    onBlur={validateDescriptionHandler}
+                  />
+                  {validatedDescription === false && (
+                    <p className="error-check">
+                      Please, enter description for record
+                    </p>
+                  )}
+                </div>
+            </div>
+          </div>)}
       </div>
       <div className="mb-5 d-flex justify-content-center">
         <Button type="submit" className="btn login mb-4">
