@@ -107,6 +107,7 @@ const EditRecord = (props) => {
           setProvidedAmount(res.revenue.amount);
           setProvidedDescription(res.revenue.description);
           setProvidedCategory(res.revenue.category);
+          setProvidedAccount(res.revenue.accountType);
         }
         let date;
         if (res.expense) {
@@ -173,6 +174,26 @@ const EditRecord = (props) => {
         }
         
         await postingEditedRecord('revenue',requestPatchOptions)
+      }
+      else if(recordType==='transfer'){
+        const requestPostOptions={
+          method: "POST",
+          headers: myHeaders,
+          body: JSON.stringify({
+            "id": recordId,
+            "transaction_type": recordType,
+            "description": providedDescription,
+            "date": providedDate,
+            "category": providedCategory,
+            "revenue_balance": providedAmount,
+            "account_type": providedAccount
+          }),
+        }
+        try{
+          await postingEditedRecord('revenue',requestPostOptions)
+        }catch(e){
+          console.log(e)
+        }
       }
       else{
         const requestPatchOptions={
@@ -258,67 +279,131 @@ const EditRecord = (props) => {
               </div>
               {recordType === "revenue" && (
                 <div>
-                <div
-                  className={`control ${
-                    validatedAccount === false ? "invalid" : "check"
-                  }`}
-                >
-                  <h6 className="form-label" htmlFor="account">
-                    Type of Account
-                  </h6>
-                  <select
-                    id="gender"
-                    className="form-select field"
-                    value={providedAccount}
-                    onChange={accountHandler}
-                    onBlur={validateAccountHandler}
-                    required
+                  <div
+                    className={`control ${
+                      validatedAccount === false ? "invalid" : "check"
+                    }`}
                   >
-                    <option defaultValue>Choose...</option>
-                    <option value="Chequing">Chequing</option>{/* PapaAccount */}
-                    <option value="Visa">Visa</option>{/* DinaAccount */}
-                    <option value="LineOfCredit">Line of Credit</option>{/* SnezhanaAccount */}
-                  </select>
-                  {validatedAccount === false && (
-                    <p className="error-check">
-                      Please, select type of account
-                    </p>
-                  )}
-                </div>
-                <div
-                  className={`control ${
-                    validatedCategory === false ? "invalid" : "check"
-                  }`}
-                >
-                  <h6 className="form-label" htmlFor="category">
-                    Income Category
-                  </h6>
-                  <select
-                    id="gender"
-                    className="form-select field"
-                    value={providedCategory}
-                    onChange={editcategoryHandler}
-                    onBlur={editvalidateCategoryHandler}
-                    required
+                    <h6 className="form-label" htmlFor="account">
+                      Type of Account
+                    </h6>
+                    <select
+                      id="gender"
+                      className="form-select field"
+                      value={providedAccount}
+                      onChange={accountHandler}
+                      onBlur={validateAccountHandler}
+                      required
+                    >
+                      <option defaultValue>Choose...</option>
+                      <option value="Chequing">Chequing</option>
+                      {/* <option value="Visa">Visa</option> */}
+                      {/* <option value="LineOfCredit">Line of Credit</option> */}
+                    </select>
+                    {validatedAccount === false && (
+                      <p className="error-check">
+                        Please, select type of account
+                      </p>
+                    )}
+                  </div>
+                  <div
+                    className={`control ${
+                      validatedCategory === false ? "invalid" : "check"
+                    }`}
                   >
-                    <option defaultValue>Choose...</option>
-                    {(providedAccount==='Chequing')&& (<option value="salary">Salary</option>)}
-                    {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
-                      Transfer to Visa
-                    </option>)}
-                    {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
-                      Transfer to Line of Credit
-                    </option>)}
-                    {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
-                      Transfer to Chequing
-                    </option>)}
-                  </select>
-                  {validatedCategory === false && (
-                    <p className="error-check">
-                      Please, select income category
-                    </p>
-                  )}
+                    <h6 className="form-label" htmlFor="category">
+                      Category
+                    </h6>
+                    <select
+                      id="gender"
+                      className="form-select field"
+                      value={providedCategory}
+                      onChange={editcategoryHandler}
+                      onBlur={editvalidateCategoryHandler}
+                      required
+                    >
+                      <option defaultValue>Choose...</option>
+                      {(providedAccount==='Chequing')&& (<option value="salary">Salary</option>)}
+                      {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
+                        Transfer to Visa
+                      </option>)}
+                      {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
+                        Transfer to Line of Credit
+                      </option>)}
+                      {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
+                        Transfer to Chequing
+                      </option>)}
+                    </select>
+                    {validatedCategory === false && (
+                      <p className="error-check">
+                        Please, select category
+                      </p>
+                    )}
+                  </div>
                 </div>
+              )}
+              {recordType === "transfer" && (
+                <div>
+                  <div
+                    className={`control ${
+                      validatedAccount === false ? "invalid" : "check"
+                    }`}
+                  >
+                    <h6 className="form-label" htmlFor="account">
+                      Type of Account
+                    </h6>
+                    <select
+                      id="gender"
+                      className="form-select field"
+                      value={providedAccount}
+                      onChange={accountHandler}
+                      onBlur={validateAccountHandler}
+                      required
+                    >
+                      <option defaultValue>Choose...</option>
+                      <option value="Chequing">Chequing</option>
+                      <option value="Visa">Visa</option>
+                      <option value="LineOfCredit">Line of Credit</option>
+                    </select>
+                    {validatedAccount === false && (
+                      <p className="error-check">
+                        Please, select type of account
+                      </p>
+                    )}
+                  </div>
+                  <div
+                    className={`control ${
+                      validatedCategory === false ? "invalid" : "check"
+                    }`}
+                  >
+                    <h6 className="form-label" htmlFor="category">
+                      Category
+                    </h6>
+                    <select
+                      id="gender"
+                      className="form-select field"
+                      value={providedCategory}
+                      onChange={editcategoryHandler}
+                      onBlur={editvalidateCategoryHandler}
+                      required
+                    >
+                      <option defaultValue>Choose...</option>
+                      {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
+                        Transfer to Visa
+                      </option>)}
+                      {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
+                        Transfer to Line of Credit
+                      </option>)}
+                      {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
+                        Transfer to Chequing
+                      </option>)}
+                    </select>
+                    {validatedCategory === false && (
+                      <p className="error-check">
+                        Please, select category
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
               {recordType === "expense" && (
@@ -341,15 +426,6 @@ const EditRecord = (props) => {
                   >
                     <option defaultValue>Choose...</option>
                     <option value="grocery">Grocery</option>
-                    {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
-                      Transfer to Visa
-                    </option>)}
-                    {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
-                      Transfer to Line of Credit
-                    </option>)}
-                    {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
-                      Transfer to Chequing
-                    </option>)}
                     <option value="utilitiesPayment">Utilities</option>
                     <option value="otherPayment">Other Payments</option>
                     <option value="medicine">Medicine</option>

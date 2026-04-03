@@ -129,6 +129,25 @@ const NewRecord = (props) => {
           console.log(e)
         }
       }
+      else if(providedType ==='transfer'){
+        const requestPostOptions={
+          method: "POST",
+          headers: myHeaders,
+          body: JSON.stringify({
+            "transaction_type": providedType,
+            "description": providedDescription,
+            "date": providedDate,
+            "category": providedCategory,
+            "revenue_balance": providedAmount,
+            "account_type": providedAccount
+          }),
+        }
+        try{
+          await postingNewRecord('revenue',requestPostOptions)
+        }catch(e){
+          console.log(e)
+        }
+      }
       else{
         const requestPostOptions={
           method: "POST",
@@ -224,7 +243,8 @@ const NewRecord = (props) => {
                 required
               >
                 <option defaultValue>Choose...</option>
-                <option value="revenue">Deposits/Transfers</option>
+                <option value="revenue">Deposit</option>
+                <option value="transfer">Transfer</option>
                 <option value="expense">Expense</option>
               </select>
               {validatedType === false && (
@@ -232,6 +252,131 @@ const NewRecord = (props) => {
               )}
             </div>
             {providedType === "revenue" && (
+              <div>
+                <div
+                  className={`control ${
+                    validatedDate === false ? "invalid" : "check"
+                  }`}
+                >
+                  <h6 className="form-label" htmlFor="date">
+                    Record Date
+                  </h6>
+                  <input
+                    type="date"
+                    className="form-select field"
+                    id="date"
+                    name="date"
+                    value={providedDate}
+                    onChange={dateHandler}
+                    onBlur={validateDateHandler}
+                    min="2018-01-01"
+                    max="2099-12-31"
+                  />
+                  {validatedDate === false && (
+                    <p className="error-check">Please select record's date</p>
+                  )}
+                </div>
+                <div
+                  className={`control ${
+                    validatedAccount === false ? "invalid" : "check"
+                  }`}
+                >
+                  <h6 className="form-label" htmlFor="account">
+                    Type of Account
+                  </h6>
+                  <select
+                    id="gender"
+                    className="form-select field"
+                    value={providedAccount}
+                    onChange={accountHandler}
+                    onBlur={validateAccountHandler}
+                    required
+                  >
+                    <option defaultValue>Choose...</option>
+                    <option value="Chequing">Chequing</option>
+                    {/* <option value="Visa">Visa</option> */}
+                    {/* <option value="LineOfCredit">Line of Credit</option> */}
+                  </select>
+                  {validatedAccount === false && (
+                    <p className="error-check">
+                      Please, select type of account
+                    </p>
+                  )}
+                </div>
+                <div
+                  className={`control ${
+                    validatedCategory === false ? "invalid" : "check"
+                  }`}
+                >
+                  <h6 className="form-label" htmlFor="category">
+                    Category
+                  </h6>
+                  <select
+                    id="gender"
+                    className="form-select field"
+                    value={providedCategory}
+                    onChange={categoryHandler}
+                    onBlur={validateCategoryHandler}
+                    required
+                  >
+                    <option defaultValue>Choose...</option>
+                    <option value="salary">Salary</option>
+                  </select>
+                  {validatedCategory === false && (
+                    <p className="error-check">
+                      Please, select income category
+                    </p>
+                  )}
+                </div>
+                
+                <div
+                  className={`control ${
+                    validatedAmount === false ? "invalid" : "check"
+                  }`}
+                >
+                  <h6 className="form-label" htmlFor="amount">
+                    Record Amount{" "}
+                  </h6>
+                  <input
+                    type="number"
+                    id="amount"
+                    className="form-control field"
+                    value={providedAmount}
+                    onChange={amountHandler}
+                    onBlur={validateAmountHandler}
+                  />
+                  {validatedAmount === false && (
+                    <p className="error-check">
+                      Please, enter amount for record
+                    </p>
+                  )}
+                </div>
+                <div
+                  className={`control ${
+                    validatedDescription === false ? "invalid" : "check"
+                  }`}
+                >
+                  <h6 className="form-label" htmlFor="description">
+                    Description{" "}
+                  </h6>
+                  <textarea
+                    rows="3"
+                    id="description"
+                    className="form-control field"
+                    value={providedDescription}
+                    onChange={descriptionHandler}
+                    onBlur={validateDescriptionHandler}
+                  />
+                  {validatedDescription === false && (
+                    <p className="error-check">
+                      Please, enter description for record
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {providedType === "transfer" && (
               <div>
                 <div
                   className={`control ${
@@ -289,7 +434,7 @@ const NewRecord = (props) => {
                   }`}
                 >
                   <h6 className="form-label" htmlFor="category">
-                    Income Category
+                    Category
                   </h6>
                   <select
                     id="gender"
@@ -299,8 +444,7 @@ const NewRecord = (props) => {
                     onBlur={validateCategoryHandler}
                     required
                   >
-                    <option defaultValue>Choose...</option>
-                    {(providedAccount==='Chequing')&& (<option value="salary">Salary</option>)}
+                    <option defaultValue>Choose...</option>                    
                     {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
                       Transfer to Visa
                     </option>)}
@@ -313,7 +457,7 @@ const NewRecord = (props) => {
                   </select>
                   {validatedCategory === false && (
                     <p className="error-check">
-                      Please, select income category
+                      Please, select transfer category
                     </p>
                   )}
                 </div>
@@ -364,6 +508,7 @@ const NewRecord = (props) => {
                 </div>
               </div>
             )}
+
             {providedType === "expense" && (
               <div>
                 <div

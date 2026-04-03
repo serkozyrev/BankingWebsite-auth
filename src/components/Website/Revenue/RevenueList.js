@@ -11,7 +11,7 @@ const RevenueList = (props) => {
   return (
     <>
       <ul className="revenue-list">
-        <h3 className="revenue-list h3">Income</h3>
+        <h3 className="revenue-list h3">Deposits/Transfers</h3>
         <div className="revenue-list items">
           {authCtx.revenuesList &&
             authCtx.revenuesList.map((revenue) => (
