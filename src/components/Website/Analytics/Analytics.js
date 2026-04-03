@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import AuthContext from "../../context/auth-context";
 // import { useNavigate } from "react-router-dom";
 
@@ -27,8 +27,10 @@ const Analytics = () => {
         throw new Error("Something went wrong!");
       }
       const responseData = await response.json();
+      console.log('responsedata.revenue', responseData.infoRevenue)
       authCtx.setInfoAnalysis(responseData.infoVisa.info);
       authCtx.setInfoAnalysisMine(responseData.infoChequingLineOfCredit.info);
+      authCtx.setInfoAnalysisRevenue(responseData.infoRevenue.info)
     };
     try {
       fetchMovies().catch((error) => {});
@@ -57,6 +59,22 @@ const Analytics = () => {
         <div className="container">
           {authCtx.infoAnalysis &&
             authCtx.infoAnalysis.map((info) => (
+              <AnalyticsItem
+                key={info.id}
+                infoSummary={info.summary}
+                amount={info.amount}
+                title={info.title}
+                year={info.year}
+                type={info.type}
+              />
+            ))}
+        </div>
+      </Card>
+      <Card className="analysis">
+        <h3>Deposits/Transfers</h3>
+        <div className="container">
+          {authCtx.infoAnalysisRevenue &&
+            authCtx.infoAnalysisRevenue.map((info) => (
               <AnalyticsItem
                 key={info.id}
                 infoSummary={info.summary}

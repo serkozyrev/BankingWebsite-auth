@@ -10,7 +10,10 @@ const AnalyticsItem = (props) => {
     <Card className="chartBox">
       <h5 className="items-name">Expense: {props.title}</h5>
       <div className="items-price">
-        Expense amount this month: ${props.amount} cad
+        Expense amount this month: CAD {props.amount.toLocaleString("en-CA", {
+              style: "currency",
+              currency: "CAD",
+            })}
       </div>
       <div className="chart-bars">
         <h6>Category Yearly</h6>

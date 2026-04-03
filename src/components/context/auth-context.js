@@ -40,6 +40,7 @@ export const AuthContextProvider = (props) => {
   const [openSignUp, setOpenSignUp] = useState(false)
   const [infoAnalysis, setInfoAnalysis] = useState([]);
   const [infoAnalysisMine, setInfoAnalysisMine] = useState([]);
+  const [infoAnalysisRevenue, setInfoAnalysisRevenue] = useState([]);
   
 
   // const rateHandler = (data) => {
@@ -395,6 +396,8 @@ export const AuthContextProvider = (props) => {
   const contextValue = {
     setInfoAnalysis,
     setInfoAnalysisMine,
+    setInfoAnalysisRevenue,
+    infoAnalysisRevenue,
     infoAnalysis,
     infoAnalysisMine,
     formIsValid,
