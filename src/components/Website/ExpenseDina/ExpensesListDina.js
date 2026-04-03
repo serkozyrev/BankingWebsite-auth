@@ -34,7 +34,7 @@ const ExpensesListDina = (props) => {
   }
   return (
     <ul className="expenses-list">
-      <h3 className="expenses-list h3">Visa Expenses</h3>
+      <h3 className="expenses-list h3">Visa</h3>
       <div className="expenses-list items">
         {authCtx.expensesListDina &&
           authCtx.expensesListDina.map((expense) => (

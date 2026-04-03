@@ -35,10 +35,10 @@ const ExpensesList = (props) => {
   }
   return (
     <ul className="expenses-list">
-      <h3 className="expenses-list h3">Chequing/Line of Credit Expenses</h3>
+      <h3 className="expenses-list h3">Line of Credit</h3>
       <div className="expenses-list items">
-        {authCtx.expensesList &&
-          authCtx.expensesList.map((expense) => (
+        {authCtx.expensesListLineOfCredit &&
+          authCtx.expensesListLineOfCredit.map((expense) => (
             <ExpenseItem
               key={expense.id}
               id={expense.id}

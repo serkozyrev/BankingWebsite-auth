@@ -21,10 +21,10 @@ const ExpensesWebsite = (props) => {
           <RevenueList />
         </Card>
         <Card className="transaction-body">
-          <ExpensesList />
+          <ExpensesListDina />
         </Card>
         <Card className="transaction-body">
-          <ExpensesListDina />
+          <ExpensesList />
         </Card>
       </div>
     </div>

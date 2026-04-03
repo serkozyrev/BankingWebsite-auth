@@ -84,72 +84,40 @@ const NewRecord = (props) => {
     myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
     myHeaders.append('Content-Type','application/json')
     if(isChecked){
-      const requestPostOptions={
-          method: "POST",
-          headers: myHeaders,
-          body: JSON.stringify({
-            "description": providedDescription
-          }),
+      const requestAIOptions={
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          "description": providedDescription
+        }),
+      }
+      try{
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/ai/parse-entry`, requestAIOptions)
+    
+        if(!res.ok){
+          const err=(await res).json().catch(()=>null)
+          throw new Error(err?.detail || "Failed to add record")
         }
-        try{
-          const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/ai/parse-entry`, requestPostOptions)
-      
-          if(!res.ok){
-            const err=(await res).json().catch(()=>null)
-            throw new Error(err?.detail || "Failed to add record")
-          }
-          const data = await res.json()
-          props.dataFunc(data.message);
+        const data = await res.json()
 
-          authCtx.closeModal();
-          props.infoBool();
-          console.log("data", data)
-          
-        }catch(e){
-          console.log(e)
-        }
+        authCtx.closeModal();
+        console.log("data", data)
+        const requestPostOptions={
+        method: "POST",
+        headers: myHeaders,
+        body: JSON.stringify(data),
+      }
+      try{
+        await postingNewRecord('expense',requestPostOptions)
+      }catch(e){
+        console.log(e)
+      }
+        
+      }catch(e){
+        console.log(e)
+      }
     }else{
-      if(providedType==='revenue'){
-        console.log('test')
-        const requestPostOptions={
-          method: "POST",
-          headers: myHeaders,
-          body: JSON.stringify({
-            "transaction_type": providedType,
-            "description": providedDescription,
-            "date": providedDate,
-            "category": providedCategory,
-            "revenue_balance": providedAmount,
-            "account_type": providedAccount
-          }),
-        }
-        try{
-          await postingNewRecord('revenue',requestPostOptions)
-        }catch(e){
-          console.log(e)
-        }
-      }
-      else if(providedType ==='transfer'){
-        const requestPostOptions={
-          method: "POST",
-          headers: myHeaders,
-          body: JSON.stringify({
-            "transaction_type": providedType,
-            "description": providedDescription,
-            "date": providedDate,
-            "category": providedCategory,
-            "revenue_balance": providedAmount,
-            "account_type": providedAccount
-          }),
-        }
-        try{
-          await postingNewRecord('revenue',requestPostOptions)
-        }catch(e){
-          console.log(e)
-        }
-      }
-      else{
-        const requestPostOptions={
+      const requestPostOptions={
           method: "POST",
           headers: myHeaders,
           body: JSON.stringify({
@@ -158,6 +126,7 @@ const NewRecord = (props) => {
             "date": providedDate,
             "category": providedCategory,
             "expense_balance": providedAmount,
+            "account_type": providedAccount
           }),
         }
         try{
@@ -165,7 +134,48 @@ const NewRecord = (props) => {
         }catch(e){
           console.log(e)
         }
-      }
+      // if(providedType==='revenue'){
+      //   console.log('test')
+      //   const requestPostOptions={
+      //     method: "POST",
+      //     headers: myHeaders,
+      //     body: JSON.stringify({
+      //       "transaction_type": providedType,
+      //       "description": providedDescription,
+      //       "date": providedDate,
+      //       "category": providedCategory,
+      //       "revenue_balance": providedAmount,
+      //       "account_type": providedAccount
+      //     }),
+      //   }
+      //   try{
+      //     await postingNewRecord('revenue',requestPostOptions)
+      //   }catch(e){
+      //     console.log(e)
+      //   }
+      // }
+      // else if(providedType ==='transfer'){
+      //   const requestPostOptions={
+      //     method: "POST",
+      //     headers: myHeaders,
+      //     body: JSON.stringify({
+      //       "transaction_type": providedType,
+      //       "description": providedDescription,
+      //       "date": providedDate,
+      //       "category": providedCategory,
+      //       "revenue_balance": providedAmount,
+      //       "account_type": providedAccount
+      //     }),
+      //   }
+      //   try{
+      //     await postingNewRecord('revenue',requestPostOptions)
+      //   }catch(e){
+      //     console.log(e)
+      //   }
+      // }
+      // else{
+        
+      // }
     }
   };
 
@@ -189,8 +199,9 @@ const NewRecord = (props) => {
         authCtx.setRevenuesList(data.revenues);
       }
       else{
-        authCtx.setExpensesList(data.expensesChequingLineOfCredit);
+        authCtx.setExpensesList(data.expensesChequing);
         authCtx.setExpensesListDina(data.expensesVisa);
+        authCtx.setExpensesListLineOfCredit(data.expensesLineOfCredit)
         authCtx.totalSum(data.totalChequing);
         authCtx.totalSumDina(data.totalVisa);
         authCtx.totalSumSnezhana(data.totalLineOfCredit);
@@ -206,10 +217,10 @@ const NewRecord = (props) => {
           Please select income or expense and add description to this record.
           When you finish, press Save. All fields should be filled. 
 
-          {/* You can also check the box and right request to AI to create a record for you.
-          eg. "create income record for transfer from chequing to visa 115.26 with today date" */}
+          You can also check the box and right request to AI to create a record for you.
+          eg. "create income record for transfer from chequing to visa 115.26 with today date"
         </p>
-        {/* <div className="d-flex justify-content-center">
+        <div className="d-flex justify-content-center">
           <div className="form-check">
             <input
               type="checkbox"
@@ -223,7 +234,7 @@ const NewRecord = (props) => {
               {isChecked ? "Checked" : "Unchecked"}
             </label>
           </div>
-        </div> */}
+        </div>
         {!isChecked && (<div className="d-flex justify-content-center">
           <div className="col-8 mb-4 mt-3">
             <div

@@ -18,6 +18,7 @@ export const AuthContextProvider = (props) => {
   const [expenseTotalPapa, setExpenseTotalPapa] = useState(0);
   const [expensesList, setExpensesList] = useState([]);
   const [expensesListDina, setExpensesListDina] = useState([]);
+  const [expensesListLineOfCredit, setExpensesListLineOfCredit] = useState([]);
   const [revenuesList, setRevenuesList] = useState([]);
   const [accountBalanceMine, setAccountBalanceMine] = useState("");
   const [accountBalanceDina, setAccountBalanceDina] = useState("");
@@ -151,7 +152,8 @@ export const AuthContextProvider = (props) => {
         }
         const responseData = await response.json();
         setExpensesListDina(responseData.expensesVisa);
-        setExpensesList(responseData.expensesChequingLineOfCredit);
+        setExpensesList(responseData.expensesChequing);
+        setExpensesListLineOfCredit(responseData.expensesLineOfCredit);
         totalSum(responseData.totalChequing);
         totalSumDina(responseData.totalVisa);
         totalSumSnezhana(responseData.totalLineOfCredit);
@@ -423,12 +425,14 @@ export const AuthContextProvider = (props) => {
     totalSumSnezhana,
     setExpensesList,
     setExpensesListDina,
+    setExpensesListLineOfCredit,
     setRevenuesList,
     copyPreviousEntry,
     deleteEntry,
     revenuesList,
     expensesList,
     expensesListDina,
+    expensesListLineOfCredit,
     popupIsShown,
     accountBalanceDina,
     accountBalanceMine,
