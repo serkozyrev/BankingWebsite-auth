@@ -250,6 +250,7 @@ export const AuthContextProvider = (props) => {
     setEmail("")
     setRevenuesList([]);
     setExpensesListDina([]);
+    setExpensesListLineOfCredit([]);
     setExpensesList([]);
     setExpenseTotalPapa(0);
     setExpenseTotalDina(0);
