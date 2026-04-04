@@ -41,7 +41,7 @@ export const AuthContextProvider = (props) => {
   const [openSignUp, setOpenSignUp] = useState(false)
   const [infoAnalysis, setInfoAnalysis] = useState([]);
   const [infoAnalysisMine, setInfoAnalysisMine] = useState([]);
-  const [infoAnalysisRevenue, setInfoAnalysisRevenue] = useState([]);
+  const [infoAnalysisLineOfCredit, setInfoAnalysisLineOfCredit] = useState([]);
   
 
   // const rateHandler = (data) => {
@@ -260,6 +260,7 @@ export const AuthContextProvider = (props) => {
     setAccountBalanceSnezhana("");
     setInfoAnalysis([])
     setInfoAnalysisMine([])
+    setInfoAnalysisLineOfCredit([])
   },[])
   
   const login = useCallback((token,uid, authTokenType, username, expirationDate)=>{
@@ -399,8 +400,8 @@ export const AuthContextProvider = (props) => {
   const contextValue = {
     setInfoAnalysis,
     setInfoAnalysisMine,
-    setInfoAnalysisRevenue,
-    infoAnalysisRevenue,
+    setInfoAnalysisLineOfCredit,
+    infoAnalysisLineOfCredit,
     infoAnalysis,
     infoAnalysisMine,
     formIsValid,

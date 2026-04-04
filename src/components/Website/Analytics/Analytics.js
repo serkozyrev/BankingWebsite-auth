@@ -29,8 +29,8 @@ const Analytics = () => {
       const responseData = await response.json();
       console.log('responsedata.revenue', responseData.infoRevenue)
       authCtx.setInfoAnalysis(responseData.infoVisa.info);
-      authCtx.setInfoAnalysisMine(responseData.infoChequingLineOfCredit.info);
-      authCtx.setInfoAnalysisRevenue(responseData.infoRevenue.info)
+      authCtx.setInfoAnalysisMine(responseData.infoChequing.info);
+      authCtx.setInfoAnalysisLineOfCredit(responseData.infoLineOfCredit.info)
     };
     try {
       fetchMovies().catch((error) => {});
@@ -39,10 +39,10 @@ const Analytics = () => {
   return (
     <div className="analysis-container">
       <Card className="analysis">
-        <h3>Chequing/Line Expenses</h3>
+        <h3>Chequing</h3>
         <div className="container">
-          {authCtx.infoAnalysisMine &&
-            authCtx.infoAnalysisMine.map((info) => (
+          {authCtx.infoChequing &&
+            authCtx.infoChequing.map((info) => (
               <AnalyticsItem
                 key={info.id}
                 infoSummary={info.summary}
@@ -55,7 +55,7 @@ const Analytics = () => {
         </div>
       </Card>
       <Card className="analysis">
-        <h3>Visa Expenses</h3>
+        <h3>Visa</h3>
         <div className="container">
           {authCtx.infoAnalysis &&
             authCtx.infoAnalysis.map((info) => (
@@ -71,10 +71,10 @@ const Analytics = () => {
         </div>
       </Card>
       <Card className="analysis">
-        <h3>Deposits/Transfers</h3>
+        <h3>Line of Credit</h3>
         <div className="container">
-          {authCtx.infoAnalysisRevenue &&
-            authCtx.infoAnalysisRevenue.map((info) => (
+          {authCtx.infoLineOfCredit &&
+            authCtx.infoLineOfCredit.map((info) => (
               <AnalyticsItem
                 key={info.id}
                 infoSummary={info.summary}
