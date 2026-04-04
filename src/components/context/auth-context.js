@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useEffect, useState } from "react";
 
 
+
 const AuthContext = createContext({
   token: "",
   isLoggedIn: false,
@@ -42,6 +43,8 @@ export const AuthContextProvider = (props) => {
   const [infoAnalysis, setInfoAnalysis] = useState([]);
   const [infoAnalysisMine, setInfoAnalysisMine] = useState([]);
   const [infoAnalysisLineOfCredit, setInfoAnalysisLineOfCredit] = useState([]);
+  const [categories, setCategories] = useState([])
+  const [categoryModalPopUpWindow, setCategoryModalPopUpWindow] = useState(false);
   
 
   // const rateHandler = (data) => {
@@ -96,7 +99,41 @@ export const AuthContextProvider = (props) => {
   const showSignUpHandler = () => {
     setOpenSignUp(!openSignUp);
   };  
+  const newCategoryRecordShowHandler = () => {
+    setCategoryModalPopUpWindow(true)
+  };
 
+  const newCategoryRecordCloseHandler = () => {
+    setCategoryModalPopUpWindow(false)
+  };
+
+  useEffect(()=>{
+    if(!authToken) return
+    const fetchCategories = async()=>{
+      try{
+        const myHeaders= new Headers()
+        myHeaders.append('Authorization', 'Bearer ' + authToken)
+        const requestOptions={
+              method:'GET',
+              headers:myHeaders
+        }
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/categories/all`, requestOptions
+        )
+        if (!response.ok) {
+            const err = await response.json().catch(() => null);
+            console.log("fetch /categories/all failed", response.status, err);
+            throw new Error(err?.detail || "Something went wrong!");
+          }
+          const responseData = await response.json();
+          console.log('responseData',responseData)
+          setCategories(responseData)
+        }catch(e){
+          console.log('categories fetch error: ',e)
+        }
+      }
+      fetchCategories()
+    },[authToken])
   useEffect(() => {
       if(!authToken) return;
       const fetchRevenues = async () => {
@@ -207,7 +244,7 @@ export const AuthContextProvider = (props) => {
       alert(error.message || "Login failed");
     }
   }
-  const signUp = (e)=>{
+  const signUp = async (e)=>{
     e?.preventDefault();
     
     let formDataSignUp= JSON.stringify({
@@ -221,22 +258,18 @@ export const AuthContextProvider = (props) => {
       headers:{"Content-Type": "application/json"},
       body:formDataSignUp
     }
-    fetch(process.env.REACT_APP_BACKEND_URL + '/user/', requestOptions)
-    .then(response=>{
-        if(response.ok){
-          return response.json()
-        }
-        // throw response
-    })
-    .then(data=>{
-      signIn()      
-    })
-    .catch(error=>{
-      alert(error)
-    })
-  }
+    try{
+      const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/user/', requestOptions)
 
-  
+      const result = await response.json()
+      if(!response.ok){
+        throw new Error(result.detail)
+      }
+      signIn()  
+    }catch(e){
+      alert(e.message)
+    }
+  }  
 
   const signOut= useCallback((event)=>{
     setAuthToken(null)
@@ -261,6 +294,7 @@ export const AuthContextProvider = (props) => {
     setInfoAnalysis([])
     setInfoAnalysisMine([])
     setInfoAnalysisLineOfCredit([])
+    setCategories([])
   },[])
   
   const login = useCallback((token,uid, authTokenType, username, expirationDate)=>{
@@ -395,9 +429,10 @@ export const AuthContextProvider = (props) => {
     }
   };
 
-
-
   const contextValue = {
+    showCategoryModal:newCategoryRecordShowHandler,
+    closeCategoryModal:newCategoryRecordCloseHandler,
+    categoryModalPopUpWindow,
     setInfoAnalysis,
     setInfoAnalysisMine,
     setInfoAnalysisLineOfCredit,
@@ -460,7 +495,9 @@ export const AuthContextProvider = (props) => {
     emailHandler,
     passwordHandler,
     showSignInHandler,
-    showSignUpHandler
+    showSignUpHandler,
+    categories,
+    setCategories
   };
 
   return (

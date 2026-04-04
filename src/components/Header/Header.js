@@ -8,19 +8,30 @@ import Modal from "../UI//Modal/Modal";
 import NewRecord from "./NewRecord";
 import Button from "../UI/Button/Button";
 import Search from "./Search";
+import NewCategories from "./NewCategories"
 
 const Header = (props) => {
   const [dataInfo, setDataInfo] = useState("");
   const [infoAfterMessage, setInfoAfterMessage] = useState(false);
+  const [categoryModalWindow, setCategoryModalWindow] = useState(false);
+  // const [categoryModalPopUpWindow, setCategoryModalPopUpWindow] = useState(false);
   const authCtx = useContext(AuthContext);
 
   const newRecordHandler = () => {
     authCtx.showModal();
   };
 
+  const newCategoryRecordHandler = () => {
+    authCtx.showCategoryModal()
+  };
+
   const dataInformation = (data) => {
     setDataInfo(data);
   };
+
+  const showCloseCategoryModalHandler=()=>{
+    setCategoryModalWindow(!categoryModalWindow)
+  }
 
   const showCloseModalHandler = () => {
     setInfoAfterMessage(!infoAfterMessage);
@@ -34,7 +45,7 @@ const Header = (props) => {
           info={
           <form className='app_signIn' onSubmit={authCtx.signIn}>
             
-            <input placeholder='username' type="text" className="form-control field" value={authCtx.username} onChange={authCtx.usernameHandler}/>
+            <input placeholder='username' type="text" className="form-control field" value={authCtx.username} onChange={authCtx.usernameHandler} autoFocus/>
             <input placeholder='password' type="password" className="form-control field" value={authCtx.password} onChange={authCtx.passwordHandler}/>
             <Button type='submit'>Login</Button>
           </form>
@@ -44,10 +55,11 @@ const Header = (props) => {
       {authCtx.openSignUp && (
         <Modal
           onClose={authCtx.showSignUpHandler}
+          
           info={
             <form className='app_signIn' onSubmit={authCtx.signUp}>           
             
-            <input placeholder='username' type="text" className="form-control field" value={authCtx.username} onChange={authCtx.usernameHandler}/>
+            <input placeholder='username' type="text" className="form-control field" value={authCtx.username} onChange={authCtx.usernameHandler} autoFocus/>
             <input placeholder='email' type="email" className="form-control field"value={authCtx.email} onChange={authCtx.emailHandler}/>
             <input placeholder='password' type="password" className="form-control field" value={authCtx.password} onChange={authCtx.passwordHandler}/>
             <Button type='submit'>Sign Up</Button>
@@ -81,6 +93,13 @@ const Header = (props) => {
               >
                 Analytics
               </Nav.Link>
+              <Nav.Link
+                type="button"
+                onClick={newCategoryRecordHandler}
+                className="forgot_pass d-flex justify-content-start"
+              >
+                New Category
+              </Nav.Link>
             </Nav>
           <Search /></>)
           }
@@ -105,8 +124,23 @@ const Header = (props) => {
           }
         />
       )}
+      {authCtx.categoryModalPopUpWindow && (
+        <Modal
+          onClose={authCtx.closeCategoryModal}
+          info={
+            <NewCategories
+              dataFunc={dataInformation}
+              infoBool={showCloseCategoryModalHandler}
+            />
+          }
+        />
+      )} 
       {infoAfterMessage && authCtx.popupIsShown === false && (
         <Modal onClose={showCloseModalHandler} info={dataInfo} time />
+      )}
+
+      {categoryModalWindow && authCtx.categoryModalPopUpWindow === false && (
+        <Modal onClose={showCloseCategoryModalHandler} info={dataInfo} time />
       )}
     </Navbar>
   );

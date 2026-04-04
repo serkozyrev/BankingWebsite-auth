@@ -134,48 +134,7 @@ const NewRecord = (props) => {
         }catch(e){
           console.log(e)
         }
-      // if(providedType==='revenue'){
-      //   console.log('test')
-      //   const requestPostOptions={
-      //     method: "POST",
-      //     headers: myHeaders,
-      //     body: JSON.stringify({
-      //       "transaction_type": providedType,
-      //       "description": providedDescription,
-      //       "date": providedDate,
-      //       "category": providedCategory,
-      //       "revenue_balance": providedAmount,
-      //       "account_type": providedAccount
-      //     }),
-      //   }
-      //   try{
-      //     await postingNewRecord('revenue',requestPostOptions)
-      //   }catch(e){
-      //     console.log(e)
-      //   }
-      // }
-      // else if(providedType ==='transfer'){
-      //   const requestPostOptions={
-      //     method: "POST",
-      //     headers: myHeaders,
-      //     body: JSON.stringify({
-      //       "transaction_type": providedType,
-      //       "description": providedDescription,
-      //       "date": providedDate,
-      //       "category": providedCategory,
-      //       "revenue_balance": providedAmount,
-      //       "account_type": providedAccount
-      //     }),
-      //   }
-      //   try{
-      //     await postingNewRecord('revenue',requestPostOptions)
-      //   }catch(e){
-      //     console.log(e)
-      //   }
-      // }
-      // else{
-        
-      // }
+      
     }
   };
 
@@ -588,7 +547,10 @@ const NewRecord = (props) => {
                     onBlur={validateCategoryHandler}
                     required
                   >
-                    <option defaultValue>Choose...</option>
+                    {authCtx.categories.map((category, index) => (
+                    <option key={index} value={category.category_name}>{category.description}</option>
+                  ))}
+                    {/* <option defaultValue>Choose...</option>
                     <option value="condoFee">Condo Fee</option>
                     <option value="propertyTax">Property Tax</option>
                     <option value="enercare">Enercare</option>
@@ -606,7 +568,7 @@ const NewRecord = (props) => {
                     <option value="computerExpenses">Computer Expenses</option>
                     <option value="clothes">Clothes</option>
                     <option value="medicine">Medicine</option>
-                    <option value="otherPayment">Other Payments</option>
+                    <option value="otherPayment">Other Payments</option> */}
                   </select>
                   {validatedCategory === false && (
                     <p className="error-check">
