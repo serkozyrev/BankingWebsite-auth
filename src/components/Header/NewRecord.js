@@ -589,10 +589,24 @@ const NewRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    <option value="grocery">Grocery</option>                    
-                    <option value="utilitiesPayment">Utilities</option>
-                    <option value="otherPayment">Other Payments</option>
+                    <option value="condoFee">Condo Fee</option>
+                    <option value="propertyTax">Property Tax</option>
+                    <option value="enercare">Enercare</option>
+                    <option value="enbridge">Enbridge</option>
+                    <option value="hydro">Hydro</option>
+                    <option value="water">Water</option>
+                    <option value="carInsurance">Car Insurance</option>
+                    <option value="cellPhoneExpenses">Cell Phone Expenses</option>
+                    <option value="rrsp">RRSP</option>
+                    <option value="bankCharges">Bank Charges</option>
+                    <option value="officeSupplies">Office Supplies</option>
+                    <option value="homeExpenses">Home Expenses</option>
+                    <option value="catExpenses">Cat Expenses</option>                    
+                    <option value="grocery">Grocery</option>
+                    <option value="computerExpenses">Computer Expenses</option>
+                    <option value="clothes">Clothes</option>
                     <option value="medicine">Medicine</option>
+                    <option value="otherPayment">Other Payments</option>
                   </select>
                   {validatedCategory === false && (
                     <p className="error-check">

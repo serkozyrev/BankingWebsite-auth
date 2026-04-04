@@ -157,45 +157,45 @@ const EditRecord = (props) => {
     myHeaders.append('Content-Type','application/json')
 
     try{
-      if(recordType==='revenue'){
-        console.log('test')
-        const requestPatchOptions={
-          method: "PUT",
-          headers: myHeaders,
-          body: JSON.stringify({
-            "id": recordId,
-            "transaction_type": recordType,
-            "description": providedDescription,
-            "revenue_balance": providedAmount,
-            "date": providedDate,
-            "category": providedCategory,
-            "account_type":providedAccount,
-          }),
-        }
+      // if(recordType==='revenue'){
+      //   console.log('test')
+      //   const requestPatchOptions={
+      //     method: "PUT",
+      //     headers: myHeaders,
+      //     body: JSON.stringify({
+      //       "id": recordId,
+      //       "transaction_type": recordType,
+      //       "description": providedDescription,
+      //       "revenue_balance": providedAmount,
+      //       "date": providedDate,
+      //       "category": providedCategory,
+      //       "account_type":providedAccount,
+      //     }),
+      //   }
         
-        await postingEditedRecord('revenue',requestPatchOptions)
-      }
-      else if(recordType==='transfer'){
-        const requestPostOptions={
-          method: "POST",
-          headers: myHeaders,
-          body: JSON.stringify({
-            "id": recordId,
-            "transaction_type": recordType,
-            "description": providedDescription,
-            "date": providedDate,
-            "category": providedCategory,
-            "revenue_balance": providedAmount,
-            "account_type": providedAccount
-          }),
-        }
-        try{
-          await postingEditedRecord('revenue',requestPostOptions)
-        }catch(e){
-          console.log(e)
-        }
-      }
-      else{
+      //   await postingEditedRecord('revenue',requestPatchOptions)
+      // }
+      // else if(recordType==='transfer'){
+      //   const requestPostOptions={
+      //     method: "POST",
+      //     headers: myHeaders,
+      //     body: JSON.stringify({
+      //       "id": recordId,
+      //       "transaction_type": recordType,
+      //       "description": providedDescription,
+      //       "date": providedDate,
+      //       "category": providedCategory,
+      //       "revenue_balance": providedAmount,
+      //       "account_type": providedAccount
+      //     }),
+      //   }
+      //   try{
+      //     await postingEditedRecord('revenue',requestPostOptions)
+      //   }catch(e){
+      //     console.log(e)
+      //   }
+      // }
+      // else{}
         const requestPatchOptions={
           method: "PUT",
           headers: myHeaders,
@@ -210,7 +210,7 @@ const EditRecord = (props) => {
           }),
         }      
         await postingEditedRecord('expense',requestPatchOptions)
-      }
+      
       history(`/`);
     }catch(e){
         console.log(e)
@@ -235,8 +235,9 @@ const EditRecord = (props) => {
         authCtx.setRevenuesList(data.revenues);
       }
       else{
-        authCtx.setExpensesList(data.expensesChequingLineOfCredit);
+        authCtx.setExpensesList(data.expensesChequing);
         authCtx.setExpensesListDina(data.expensesVisa);
+        authCtx.setExpensesListLineOfCredit(data.expensesLineOfCredit)
         authCtx.totalSum(data.totalChequing);
         authCtx.totalSumDina(data.totalVisa);
         authCtx.totalSumSnezhana(data.totalLineOfCredit);
@@ -324,15 +325,6 @@ const EditRecord = (props) => {
                     >
                       <option defaultValue>Choose...</option>
                       {(providedAccount==='Chequing')&& (<option value="salary">Salary</option>)}
-                      {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
-                        Transfer to Visa
-                      </option>)}
-                      {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
-                        Transfer to Line of Credit
-                      </option>)}
-                      {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
-                        Transfer to Chequing
-                      </option>)}
                     </select>
                     {validatedCategory === false && (
                       <p className="error-check">
@@ -425,10 +417,24 @@ const EditRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
+                    <option value="condoFee">Condo Fee</option>
+                    <option value="propertyTax">Property Tax</option>
+                    <option value="enercare">Enercare</option>
+                    <option value="enbridge">Enbridge</option>
+                    <option value="hydro">Hydro</option>
+                    <option value="water">Water</option>
+                    <option value="carInsurance">Car Insurance</option>
+                    <option value="cellPhoneExpenses">Cell Phone Expenses</option>
+                    <option value="rrsp">RRSP</option>
+                    <option value="bankCharges">Bank Charges</option>
+                    <option value="officeSupplies">Office Supplies</option>
+                    <option value="homeExpenses">Home Expenses</option>
+                    <option value="catExpenses">Cat Expenses</option>                    
                     <option value="grocery">Grocery</option>
-                    <option value="utilitiesPayment">Utilities</option>
-                    <option value="otherPayment">Other Payments</option>
+                    <option value="computerExpenses">Computer Expenses</option>
+                    <option value="clothes">Clothes</option>
                     <option value="medicine">Medicine</option>
+                    <option value="otherPayment">Other Payments</option>
                   </select>
                   {validatedCategory === false && (
                     <p className="error-check">
