@@ -96,13 +96,13 @@ const Header = (props) => {
               >
                 Analytics
               </Nav.Link>
-              <Nav.Link
+              {/* <Nav.Link
                 type="button"
                 onClick={newCategoryRecordHandler}
                 className="forgot_pass d-flex justify-content-start"
               >
                 New Category
-              </Nav.Link>
+              </Nav.Link> */}
             </Nav>
           <Search /></>)
           }
