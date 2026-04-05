@@ -94,7 +94,7 @@ const postingNewRecord= async(requestPostOptions)=>{
         <h2>New Category</h2>
         <p>
           Please write category name in this format "starting with small letter, if you have two words write them as one
-          and start the second one with upper case letter (twoWords)".
+          and start the second word with upper case letter (twoWords)".
 
           Please write category name in the description normally as it should be.
         </p>        
@@ -106,7 +106,7 @@ const postingNewRecord= async(requestPostOptions)=>{
                 }`}
             >
                 <h6 className="form-label" htmlFor="amount">
-                Record Amount{" "}
+                Category Name{" "}
                 </h6>
                 <input
                 type="text"

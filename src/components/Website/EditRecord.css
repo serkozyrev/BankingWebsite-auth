@@ -46,3 +46,8 @@
   align-content: center;
   width: 560px;
 }
+
+.disabled-btn{
+  opacity:0.5;
+  cursor: not-allowed;
+}

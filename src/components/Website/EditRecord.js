@@ -64,6 +64,8 @@ const EditRecord = (props) => {
     setValidAccount(providedAccount !== "");
   };
 
+  const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDescription || !providedDate || !providedCategory
+
   useEffect(() => {
   const runDelete = async () => {
     if (!authCtx.approveDeletion) return;
@@ -417,7 +419,10 @@ const EditRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    <option value="condoFee">Condo Fee</option>
+                    {authCtx.categories.map((category, index) => (
+                      <option key={index} value={category.category_name}>{category.description}</option>
+                    ))}
+                    {/* <option value="condoFee">Condo Fee</option>
                     <option value="propertyTax">Property Tax</option>
                     <option value="enercare">Enercare</option>
                     <option value="enbridge">Enbridge</option>
@@ -434,7 +439,7 @@ const EditRecord = (props) => {
                     <option value="computerExpenses">Computer Expenses</option>
                     <option value="clothes">Clothes</option>
                     <option value="medicine">Medicine</option>
-                    <option value="otherPayment">Other Payments</option>
+                    <option value="otherPayment">Other Payments</option> */}
                   </select>
                   {validatedCategory === false && (
                     <p className="error-check">
@@ -516,7 +521,7 @@ const EditRecord = (props) => {
           </div>
         </div>
         <div className="mb-5 d-flex justify-content-center">
-          <Button type="submit" className="btn login mb-4">
+          <Button type="submit" className={`btn login mb-4 ${isDisabled ? "disabled-btn" : ""}`} disabled={isDisabled}>
             Save
           </Button>
           <Button className="btn login mb-4" to={"/"}>

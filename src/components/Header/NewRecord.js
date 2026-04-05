@@ -19,10 +19,97 @@ const NewRecord = (props) => {
   const [providedAccount, setProvidedAccount] = useState("");
   const [validatedAccount, setValidAccount] = useState();
   const [isChecked, setIsChecked] = useState(false)
+  const [isCheckedNewCategory, setIsCheckedNewCategory] = useState(false)
   const [aiAgentUserRequest, setAiAgentUserRequest]=useState("")
+
+  const [providedName, setProvidedName] = useState("");
+    const [validatedName, setValidName] = useState();
+    const [providedCategoryDescription, setProvidedCategoryDescription] = useState("");
+    const [validatedCategoryDescription, setValidCategoryDescription] = useState();
+  
+  
+    const nameHandler = (event) => {
+      setProvidedName(event.target.value);
+    };
+  
+    const validateNameHandler = () => {
+      setValidName(providedName !== "");
+    };
+  
+    const descriptionCategoryHandler = (event) => {
+      setProvidedCategoryDescription(event.target.value);
+    };
+  
+    const validateCategoryDescriptionHandler = () => {
+      setValidCategoryDescription(providedCategoryDescription !== "");
+    };
+  
+    const submitNewCategoryHandler = async(event) => {
+      event.preventDefault();
+  
+      const myHeaders= new Headers()
+      myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
+      myHeaders.append('Content-Type','application/json')
+      
+      const requestAIOptions={
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify({
+          // "category_name": providedName,
+          "description": providedCategoryDescription
+      }),
+      }
+      try{
+          const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/categories`, requestAIOptions)
+  
+          if(!res.ok){
+              const err=(await res).json().catch(()=>null)
+              throw new Error(err?.detail || "Failed to add record")
+          }
+          const data = await res.json()
+          // console.log('data', data)
+          setProvidedCategory(data.category)
+          
+          props.dataFunc(data.message);
+          
+          const myHeaders= new Headers()
+          myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
+          const requestOptions={
+            method:'GET',
+            headers:myHeaders
+          }
+          try{
+            await retrieveAllCategories(requestOptions)
+          }catch(e){
+            console.log(e)
+          }
+          
+        }catch(e){
+          console.log(e)
+        }    
+      };
+      
+      const retrieveAllCategories = async(requestPostOptions)=>{
+        
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/categories/all`, requestPostOptions)
+        
+        if(!res.ok){
+          const err=(await res).json().catch(()=>null)
+          throw new Error(err?.detail || "Failed to add record")
+        }
+        const data = await res.json()
+        authCtx.setCategories(data)
+      // console.log("data", data)
+        setIsCheckedNewCategory(false)
+        setProvidedCategoryDescription("")
+    }
 
   const handleIsChecked = ()=>{
     setIsChecked(!isChecked)
+  }
+
+  const handleIsCheckedNewCategory = ()=>{
+    setIsCheckedNewCategory(!isCheckedNewCategory)
   }
 
   const aiUserRequestHandler = (event) => {
@@ -76,6 +163,8 @@ const NewRecord = (props) => {
   const validateAccountHandler = () => {
     setValidAccount(providedAccount !== "");
   };
+
+  const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDescription || !providedDate || !providedCategory || !providedType
 
   const submitHandler = async(event) => {
     event.preventDefault();
@@ -190,7 +279,7 @@ const NewRecord = (props) => {
               onChange={handleIsChecked}
             />
             <label className="form-check-label" htmlFor="flexCheckDefault">
-              {isChecked ? "Checked" : "Unchecked"}
+              {isChecked ? "Using manual entry": "Using AI"}
             </label>
           </div>
         </div>
@@ -539,44 +628,80 @@ const NewRecord = (props) => {
                   <h6 className="form-label" htmlFor="category">
                     Type of expense
                   </h6>
-                  <select
-                    id="gender"
-                    className="form-select field"
-                    value={providedCategory}
-                    onChange={categoryHandler}
-                    onBlur={validateCategoryHandler}
-                    required
-                  >
-                    {authCtx.categories.map((category, index) => (
-                    <option key={index} value={category.category_name}>{category.description}</option>
-                  ))}
-                    {/* <option defaultValue>Choose...</option>
-                    <option value="condoFee">Condo Fee</option>
-                    <option value="propertyTax">Property Tax</option>
-                    <option value="enercare">Enercare</option>
-                    <option value="enbridge">Enbridge</option>
-                    <option value="hydro">Hydro</option>
-                    <option value="water">Water</option>
-                    <option value="carInsurance">Car Insurance</option>
-                    <option value="cellPhoneExpenses">Cell Phone Expenses</option>
-                    <option value="rrsp">RRSP</option>
-                    <option value="bankCharges">Bank Charges</option>
-                    <option value="officeSupplies">Office Supplies</option>
-                    <option value="homeExpenses">Home Expenses</option>
-                    <option value="catExpenses">Cat Expenses</option>                    
-                    <option value="grocery">Grocery</option>
-                    <option value="computerExpenses">Computer Expenses</option>
-                    <option value="clothes">Clothes</option>
-                    <option value="medicine">Medicine</option>
-                    <option value="otherPayment">Other Payments</option> */}
-                  </select>
+                  <div className="d-flex align-items-center gap-3">
+
+                    <select
+                      id="category"
+                      className="form-select field"
+                      value={providedCategory}
+                      onChange={categoryHandler}
+                      onBlur={validateCategoryHandler}
+                      required
+                    >
+                      <option value="">Choose...</option>
+                      {authCtx.categories.map((category, index) => (
+                        <option key={index} value={category.category_name}>
+                          {category.description}
+                        </option>
+                      ))}
+                    </select>
+
+                    <div className="form-check d-flex flex-column align-items-center justify-content-center m-0 p-0">
+                      <input
+                        type="checkbox"
+                        className="form-check-input m-0"
+                        id="flexCheckDefault"
+                        checked={isCheckedNewCategory}
+                        onChange={handleIsCheckedNewCategory}
+                      />
+                      <label
+                        className="form-check-label mt-1 text-center"
+                        htmlFor="flexCheckDefault"
+                      >
+                        New
+                      </label>
+                    </div>
+
+                  </div>
                   {validatedCategory === false && (
                     <p className="error-check">
                       Please, select type of expense
                     </p>
-                  )}
+                  )}                  
                 </div>
 
+                {isCheckedNewCategory &&(<>
+                <div className="mt-5 text-center">
+                  <div
+                      className={`control ${
+                      validatedCategoryDescription === false ? "invalid" : "check"
+                      }`}
+                  >
+                      <h6 className="form-label" htmlFor="description">
+                      Category name{" "}
+                      </h6>
+                      <textarea
+                      rows="3"
+                      id="description"
+                      className="form-control field"
+                      value={providedCategoryDescription}
+                      onChange={descriptionCategoryHandler}
+                      onBlur={validateCategoryDescriptionHandler}
+                      />
+                      {validatedCategoryDescription === false && (
+                      <p className="error-check">
+                          Please, enter description for record
+                      </p>
+                      )}
+                  </div>
+                </div>
+                <div className="mb-5 d-flex justify-content-center">
+                  <Button type="submit" className="btn login mb-4" onClick={submitNewCategoryHandler}>
+                    Save
+                  </Button>
+                </div>
+                </>
+                )}
                 <div
                   className={`control ${
                     validatedAmount === false ? "invalid" : "check"
@@ -653,7 +778,7 @@ const NewRecord = (props) => {
           </div>)}
       </div>
       <div className="mb-5 d-flex justify-content-center">
-        <Button type="submit" className="btn login mb-4">
+        <Button type="submit" className={`btn login mb-4 ${isDisabled ? "disabled-btn" : ""}`} disabled={isDisabled}>
           Save
         </Button>
       </div>

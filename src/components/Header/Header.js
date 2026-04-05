@@ -36,6 +36,9 @@ const Header = (props) => {
   const showCloseModalHandler = () => {
     setInfoAfterMessage(!infoAfterMessage);
   };
+
+  
+
   // console.log('opensignup',authCtx.openSignUp)
   return (
     <Navbar className="navigation" expand="lg">
