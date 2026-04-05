@@ -149,9 +149,9 @@ const Account = (props) => {
       </div>
       <Card className="account-item">
         <div className="account-item__description">
-          <h2 className="account-item h2">Visa</h2>
+          <h2 className="account-item h2">Chequing</h2>
           <div className="account-item__price">
-            CAD {authCtx.accountBalanceDina.toLocaleString("en-CA", {
+            CAD {authCtx.accountBalanceMine.toLocaleString("en-CA", {
             style: "currency",
             currency: "CAD",
           })}
@@ -160,9 +160,9 @@ const Account = (props) => {
       </Card>
       <Card className="account-item">
         <div className="account-item__description">
-          <h2 className="account-item h2">Chequing</h2>
+          <h2 className="account-item h2">Visa</h2>
           <div className="account-item__price">
-            CAD {authCtx.accountBalanceMine.toLocaleString("en-CA", {
+            CAD {authCtx.accountBalanceDina.toLocaleString("en-CA", {
             style: "currency",
             currency: "CAD",
           })}

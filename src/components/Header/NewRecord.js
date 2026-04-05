@@ -639,6 +639,7 @@ const NewRecord = (props) => {
                       required
                     >
                       <option value="">Choose...</option>
+                      <option value="addNew">Add New</option>
                       {authCtx.categories.map((category, index) => (
                         <option key={index} value={category.category_name}>
                           {category.description}
@@ -646,7 +647,7 @@ const NewRecord = (props) => {
                       ))}
                     </select>
 
-                    <div className="form-check d-flex flex-column align-items-center justify-content-center m-0 p-0">
+                    {/* <div className="form-check d-flex flex-column align-items-center justify-content-center m-0 p-0">
                       <input
                         type="checkbox"
                         className="form-check-input m-0"
@@ -660,7 +661,7 @@ const NewRecord = (props) => {
                       >
                         New
                       </label>
-                    </div>
+                    </div> */}
 
                   </div>
                   {validatedCategory === false && (
@@ -670,7 +671,7 @@ const NewRecord = (props) => {
                   )}                  
                 </div>
 
-                {isCheckedNewCategory &&(<>
+                {providedCategory === 'addNew' &&(<>
                 <div className="mt-5 text-center">
                   <div
                       className={`control ${
@@ -678,7 +679,7 @@ const NewRecord = (props) => {
                       }`}
                   >
                       <h6 className="form-label" htmlFor="description">
-                      Category name{" "}
+                      Name of a new Expense{" "}
                       </h6>
                       <textarea
                       rows="3"
@@ -690,7 +691,7 @@ const NewRecord = (props) => {
                       />
                       {validatedCategoryDescription === false && (
                       <p className="error-check">
-                          Please, enter description for record
+                          Please, enter new type of expense
                       </p>
                       )}
                   </div>
