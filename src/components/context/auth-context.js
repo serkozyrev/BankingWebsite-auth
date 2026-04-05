@@ -30,6 +30,7 @@ export const AuthContextProvider = (props) => {
   const [formIsValid, setFormIsValid] = useState(false);
   const [searchexpenseDina, setSearchExpenseDina] = useState([]);
   const [searchexpenses, setSearchExpenses] = useState([]);
+  const [searchexpenseChequing, setSearchExpenseChequing] = useState([]);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [usernameLocal, setLocalUsername] = useState('')
   const [username, setUsername] = useState('')
@@ -454,8 +455,10 @@ export const AuthContextProvider = (props) => {
     expenseTotalSnezhana,
     searchexpenses,
     searchexpenseDina,
+    searchexpenseChequing,
     setSearchExpenses,
     setSearchExpenseDina,
+    setSearchExpenseChequing,
     // rateHandler,
     totalSum,
     totalSumDina,

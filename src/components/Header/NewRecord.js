@@ -163,7 +163,7 @@ const NewRecord = (props) => {
   const validateAccountHandler = () => {
     setValidAccount(providedAccount !== "");
   };
-  console.log("providedCategory", providedCategory)
+  // console.log("providedCategory", providedCategory)
 
   const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDate || !providedCategory || !providedType
 
@@ -641,8 +641,8 @@ const NewRecord = (props) => {
                     >
                       <option value="">Choose...</option>
                       <option value="addNew">Add New</option>
-                      {authCtx.categories.map((category, index) => (
-                        <option key={index} value={category.category_name}>
+                      {authCtx.categories.map((category) => (
+                        <option key={category.category_id} value={category.category_name}>
                           {category.description}
                         </option>
                       ))}

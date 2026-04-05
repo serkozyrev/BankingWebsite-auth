@@ -252,8 +252,8 @@ const EditRecord = (props) => {
         <div className="mt-5 text-center">
           <h2>Edit Existing Record</h2>
           <p>
-            Please select revenue or expense and add description to this record.
-            When you finish, press Save. All fields should be filled.
+            You can update by pressing Save, delete record or press cancel to return to previous page.
+            All fields should be filled.
           </p>
           <div className="d-flex justify-content-center">
             <div className="col-8 mb-4 mt-3">
@@ -419,8 +419,8 @@ const EditRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    {authCtx.categories.map((category, index) => (
-                      <option key={index} value={category.category_name}>{category.description}</option>
+                    {authCtx.categories.map((category) => (
+                      <option key={category.category_id} value={category.category_name}>{category.description}</option>
                     ))}
                     {/* <option value="condoFee">Condo Fee</option>
                     <option value="propertyTax">Property Tax</option>

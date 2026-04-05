@@ -10,7 +10,7 @@ const ExpensesList = (props) => {
     return (
       <ul className="expenses-list">
         <h3 className="expenses-list h3">
-          Results for Chequing/Line of Credit
+          Results for Line of Credit
         </h3>
         <div className="expenses-list items">
           {authCtx.searchexpenses &&

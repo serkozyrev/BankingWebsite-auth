@@ -40,6 +40,7 @@ const Search = (props) => {
           authCtx.setSearchSelected(true);
           authCtx.setSearchExpenses(data.expensesList);
           authCtx.setSearchExpenseDina(data.expensesListVisa);
+          authCtx.setSearchExpenseChequing(data.expenseListCheqing);
         });
     } catch (e) {
       alert(e.message);
