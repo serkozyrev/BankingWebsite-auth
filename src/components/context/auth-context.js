@@ -126,7 +126,7 @@ export const AuthContextProvider = (props) => {
             throw new Error(err?.detail || "Something went wrong!");
           }
           const responseData = await response.json();
-          console.log('responseData',responseData)
+          // console.log('responseData',responseData)
           setCategories(responseData)
         }catch(e){
           console.log('categories fetch error: ',e)

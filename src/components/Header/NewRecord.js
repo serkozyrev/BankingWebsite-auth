@@ -163,8 +163,9 @@ const NewRecord = (props) => {
   const validateAccountHandler = () => {
     setValidAccount(providedAccount !== "");
   };
+  console.log("providedCategory", providedCategory)
 
-  const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDescription || !providedDate || !providedCategory || !providedType
+  const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDate || !providedCategory || !providedType
 
   const submitHandler = async(event) => {
     event.preventDefault();
@@ -190,7 +191,7 @@ const NewRecord = (props) => {
         const data = await res.json()
 
         authCtx.closeModal();
-        console.log("data", data)
+        // console.log("data", data)
         const requestPostOptions={
         method: "POST",
         headers: myHeaders,
