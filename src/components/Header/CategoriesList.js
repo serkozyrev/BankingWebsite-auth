@@ -61,7 +61,7 @@ const CategoriesList = (props) => {
     }
     
     hostAllCategories(requestOptions)
-  },[])
+  },[authCtx.authToken])
 
   useEffect(()=>{
     if(!categoryDeletionApproved) return
