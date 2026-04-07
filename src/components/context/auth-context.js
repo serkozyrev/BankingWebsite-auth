@@ -46,6 +46,7 @@ export const AuthContextProvider = (props) => {
   const [infoAnalysisLineOfCredit, setInfoAnalysisLineOfCredit] = useState([]);
   const [categories, setCategories] = useState([])
   const [categoryModalPopUpWindow, setCategoryModalPopUpWindow] = useState(false);
+  const [categoryMessagePopUpWindow, setCategoryMessagePopUpWindow] = useState(false);
   
 
   // const rateHandler = (data) => {
@@ -87,6 +88,13 @@ export const AuthContextProvider = (props) => {
 
   const closeMessageHandler = () => {
     setMessageIsShown(false);
+  };
+  const showCategoryMessageHandler = () => {
+    setCategoryMessagePopUpWindow(true);
+  };
+
+  const closeCategoryMessageHandler = () => {
+    setCategoryMessagePopUpWindow(false);
   };
 
   const deletionConfirmHandler = () => {
@@ -431,6 +439,10 @@ export const AuthContextProvider = (props) => {
   };
 
   const contextValue = {
+    categoryMessagePopUpWindow,
+    setCategoryMessagePopUpWindow,
+    showConfirmCategoryMessage: showCategoryMessageHandler,
+    closeConfirmCategoryMessage: closeCategoryMessageHandler,
     showCategoryModal:newCategoryRecordShowHandler,
     closeCategoryModal:newCategoryRecordCloseHandler,
     categoryModalPopUpWindow,

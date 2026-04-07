@@ -10,6 +10,8 @@ const NewRecord = (props) => {
   const [validatedAmount, setValidAmount] = useState();
   const [providedDescription, setProvidedDescription] = useState("");
   const [validatedDescription, setValidDescription] = useState();
+  const [providedAIDescription, setProvidedAIDescription] = useState("");
+  const [validatedAIDescription, setValidAIDescription] = useState();
   const [providedType, setProvidedType] = useState("");
   const [validatedType, setValidType] = useState();
   const [providedCategory, setProvidedCategory] = useState("");
@@ -19,102 +21,82 @@ const NewRecord = (props) => {
   const [providedAccount, setProvidedAccount] = useState("");
   const [validatedAccount, setValidAccount] = useState();
   const [isChecked, setIsChecked] = useState(false)
-  const [isCheckedNewCategory, setIsCheckedNewCategory] = useState(false)
-  const [aiAgentUserRequest, setAiAgentUserRequest]=useState("")
 
-  const [providedName, setProvidedName] = useState("");
-    const [validatedName, setValidName] = useState();
-    const [providedCategoryDescription, setProvidedCategoryDescription] = useState("");
-    const [validatedCategoryDescription, setValidCategoryDescription] = useState();
   
-  
-    const nameHandler = (event) => {
-      setProvidedName(event.target.value);
-    };
-  
-    const validateNameHandler = () => {
-      setValidName(providedName !== "");
-    };
-  
-    const descriptionCategoryHandler = (event) => {
-      setProvidedCategoryDescription(event.target.value);
-    };
-  
-    const validateCategoryDescriptionHandler = () => {
-      setValidCategoryDescription(providedCategoryDescription !== "");
-    };
-  
-    const submitNewCategoryHandler = async(event) => {
-      event.preventDefault();
-  
-      const myHeaders= new Headers()
-      myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
-      myHeaders.append('Content-Type','application/json')
-      
-      const requestAIOptions={
-      method: "POST",
-      headers: myHeaders,
-      body: JSON.stringify({
-          // "category_name": providedName,
-          "description": providedCategoryDescription
-      }),
-      }
-      try{
-          const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/categories`, requestAIOptions)
-  
-          if(!res.ok){
-              const err=(await res).json().catch(()=>null)
-              throw new Error(err?.detail || "Failed to add record")
-          }
-          const data = await res.json()
-          // console.log('data', data)
-          setProvidedCategory(data.category)
-          
-          props.dataFunc(data.message);
-          
-          const myHeaders= new Headers()
-          myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
-          const requestOptions={
-            method:'GET',
-            headers:myHeaders
-          }
-          try{
-            await retrieveAllCategories(requestOptions)
-          }catch(e){
-            console.log(e)
-          }
-          
-        }catch(e){
-          console.log(e)
-        }    
-      };
-      
-      const retrieveAllCategories = async(requestPostOptions)=>{
-        
-        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/categories/all`, requestPostOptions)
-        
+  const [providedCategoryDescription, setProvidedCategoryDescription] = useState("");
+  const [validatedCategoryDescription, setValidCategoryDescription] = useState();
+    
+  const descriptionCategoryHandler = (event) => {
+    setProvidedCategoryDescription(event.target.value);
+  };
+
+  const validateCategoryDescriptionHandler = () => {
+    setValidCategoryDescription(providedCategoryDescription !== "");
+  };
+
+  const submitNewCategoryHandler = async(event) => {
+    event.preventDefault();
+
+    const myHeaders= new Headers()
+    myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
+    myHeaders.append('Content-Type','application/json')
+    
+    const requestAIOptions={
+    method: "POST",
+    headers: myHeaders,
+    body: JSON.stringify({
+        // "category_name": providedName,
+        "description": providedCategoryDescription
+    }),
+    }
+    try{
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/categories`, requestAIOptions)
+
         if(!res.ok){
-          const err=(await res).json().catch(()=>null)
-          throw new Error(err?.detail || "Failed to add record")
+            const err=(await res).json().catch(()=>null)
+            throw new Error(err?.detail || "Failed to add record")
         }
         const data = await res.json()
-        authCtx.setCategories(data)
-      // console.log("data", data)
-        setIsCheckedNewCategory(false)
-        setProvidedCategoryDescription("")
-    }
+        // console.log('data', data)
+        setProvidedCategory(data.category)
+        
+        props.dataFunc(data.message);
+        
+        const myHeaders= new Headers()
+        myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
+        const requestOptions={
+          method:'GET',
+          headers:myHeaders
+        }
+        try{
+          await retrieveAllCategories(requestOptions)
+        }catch(e){
+          console.log(e)
+        }
+        
+      }catch(e){
+        console.log(e)
+      }    
+    };
+    
+    const retrieveAllCategories = async(requestPostOptions)=>{
+      
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/categories/all`, requestPostOptions)
+      
+      if(!res.ok){
+        const err=(await res).json().catch(()=>null)
+        throw new Error(err?.detail || "Failed to add record")
+      }
+      const data = await res.json()
+      authCtx.setCategories(data)
+    // console.log("data", data)
+      
+      setProvidedCategoryDescription("")
+  }
 
   const handleIsChecked = ()=>{
     setIsChecked(!isChecked)
   }
-
-  const handleIsCheckedNewCategory = ()=>{
-    setIsCheckedNewCategory(!isCheckedNewCategory)
-  }
-
-  const aiUserRequestHandler = (event) => {
-    setAiAgentUserRequest(event.target.value);
-  };
 
   const amountHandler = (event) => {
     setProvidedAmount(event.target.value);
@@ -138,6 +120,13 @@ const NewRecord = (props) => {
 
   const validateDescriptionHandler = () => {
     setValidDescription(providedDescription !== "");
+  };
+  const aiDescriptionHandler = (event) => {
+    setProvidedAIDescription(event.target.value);
+  };
+
+  const validateAIDescriptionHandler = () => {
+    setValidAIDescription(providedAIDescription !== "");
   };
 
   const typeHandler = (event) => {
@@ -164,8 +153,13 @@ const NewRecord = (props) => {
     setValidAccount(providedAccount !== "");
   };
   // console.log("providedCategory", providedCategory)
+  
+  
+    const isAIDisabled = !providedAIDescription
+  
+    const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDate || !providedCategory || !providedType
 
-  const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDate || !providedCategory || !providedType
+
 
   const submitHandler = async(event) => {
     event.preventDefault();
@@ -176,9 +170,9 @@ const NewRecord = (props) => {
     if(isChecked){
       const requestAIOptions={
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: myHeaders,
         body: JSON.stringify({
-          "description": providedDescription
+          "description": providedAIDescription
         }),
       }
       try{
@@ -266,7 +260,7 @@ const NewRecord = (props) => {
           Please select income or expense and add description to this record.
           When you finish, press Save. All fields should be filled. 
 
-          You can also check the box and right request to AI to create a record for you.
+          You can also check the box and write request to AI to create a record for you.
           eg. "create income record for transfer from chequing to visa 115.26 with today date"
         </p>
         <div className="d-flex justify-content-center">
@@ -280,7 +274,7 @@ const NewRecord = (props) => {
               onChange={handleIsChecked}
             />
             <label className="form-check-label" htmlFor="flexCheckDefault">
-              {isChecked ? "Using manual entry": "Using AI"}
+              {isChecked ? "Using AI":"Using manual entry"}
             </label>
           </div>
         </div>
@@ -629,7 +623,7 @@ const NewRecord = (props) => {
                   <h6 className="form-label" htmlFor="category">
                     Type of expense
                   </h6>
-                  <div className="d-flex align-items-center gap-3">
+                  <div className="d-flex align-items-center">
 
                     <select
                       id="category"
@@ -750,13 +744,14 @@ const NewRecord = (props) => {
               </div>
             )}
           </div>
-        </div>)}
+        </div>
+        )}
         {isChecked &&(
           <div className="d-flex justify-content-center">
             <div className="col-8 mb-4 mt-3">
               <div
                   className={`control ${
-                    validatedDescription === false ? "invalid" : "check"
+                    validatedAIDescription === false ? "invalid" : "check"
                   }`}
                 >
                   <h6 className="form-label" htmlFor="description">
@@ -766,11 +761,11 @@ const NewRecord = (props) => {
                     rows="3"
                     id="description"
                     className="form-control field"
-                    value={providedDescription}
-                    onChange={descriptionHandler}
-                    onBlur={validateDescriptionHandler}
+                    value={providedAIDescription}
+                    onChange={aiDescriptionHandler}
+                    onBlur={validateAIDescriptionHandler}
                   />
-                  {validatedDescription === false && (
+                  {validatedAIDescription === false && (
                     <p className="error-check">
                       Please, enter description for record
                     </p>
@@ -779,11 +774,16 @@ const NewRecord = (props) => {
             </div>
           </div>)}
       </div>
-      <div className="mb-5 d-flex justify-content-center">
+      {!isChecked&&(<div className="mb-5 d-flex justify-content-center">
         <Button type="submit" className={`btn login mb-4 ${isDisabled ? "disabled-btn" : ""}`} disabled={isDisabled}>
           Save
         </Button>
-      </div>
+      </div>)}
+      {isChecked&&(<div className="mb-5 d-flex justify-content-center">
+        <Button type="submit" className={`btn login mb-4 ${isDisabled ? "disabled-btn" : ""}`} disabled={isAIDisabled}>
+          Save
+        </Button>
+      </div>)}
     </form>
   );
 };

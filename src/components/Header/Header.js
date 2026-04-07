@@ -8,7 +8,7 @@ import Modal from "../UI//Modal/Modal";
 import NewRecord from "./NewRecord";
 import Button from "../UI/Button/Button";
 import Search from "./Search";
-import NewCategories from "./NewCategories"
+import CategoriesList from "./CategoriesList"
 
 const Header = (props) => {
   const [dataInfo, setDataInfo] = useState("");
@@ -96,13 +96,13 @@ const Header = (props) => {
               >
                 Analytics
               </Nav.Link>
-              {/* <Nav.Link
+              <Nav.Link
                 type="button"
                 onClick={newCategoryRecordHandler}
                 className="forgot_pass d-flex justify-content-start"
               >
-                New Category
-              </Nav.Link> */}
+                List of Categories
+              </Nav.Link>
             </Nav>
           <Search /></>)
           }
@@ -131,7 +131,7 @@ const Header = (props) => {
         <Modal
           onClose={authCtx.closeCategoryModal}
           info={
-            <NewCategories
+            <CategoriesList
               dataFunc={dataInformation}
               infoBool={showCloseCategoryModalHandler}
             />

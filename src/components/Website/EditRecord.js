@@ -159,45 +159,7 @@ const EditRecord = (props) => {
     myHeaders.append('Content-Type','application/json')
 
     try{
-      // if(recordType==='revenue'){
-      //   console.log('test')
-      //   const requestPatchOptions={
-      //     method: "PUT",
-      //     headers: myHeaders,
-      //     body: JSON.stringify({
-      //       "id": recordId,
-      //       "transaction_type": recordType,
-      //       "description": providedDescription,
-      //       "revenue_balance": providedAmount,
-      //       "date": providedDate,
-      //       "category": providedCategory,
-      //       "account_type":providedAccount,
-      //     }),
-      //   }
-        
-      //   await postingEditedRecord('revenue',requestPatchOptions)
-      // }
-      // else if(recordType==='transfer'){
-      //   const requestPostOptions={
-      //     method: "POST",
-      //     headers: myHeaders,
-      //     body: JSON.stringify({
-      //       "id": recordId,
-      //       "transaction_type": recordType,
-      //       "description": providedDescription,
-      //       "date": providedDate,
-      //       "category": providedCategory,
-      //       "revenue_balance": providedAmount,
-      //       "account_type": providedAccount
-      //     }),
-      //   }
-      //   try{
-      //     await postingEditedRecord('revenue',requestPostOptions)
-      //   }catch(e){
-      //     console.log(e)
-      //   }
-      // }
-      // else{}
+     
         const requestPatchOptions={
           method: "PUT",
           headers: myHeaders,
