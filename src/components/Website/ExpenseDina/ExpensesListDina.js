@@ -8,8 +8,8 @@ const ExpensesListDina = (props) => {
   const authCtx = useContext(AuthContext);
   const currentList = useMemo(()=>{
     return authCtx.searchSelected
-    ? authCtx.searchexpenseDina
-    : authCtx.expensesListDina;
+    ? authCtx.searchexpenseDina || []
+    : authCtx.expensesListDina || [];
 
   },[authCtx.searchSelected, authCtx.searchexpenseDina, authCtx.expensesListDina])
 

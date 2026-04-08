@@ -10,8 +10,8 @@ const ExpensesList = (props) => {
     // console.log('currentList', authCtx.expensesList)
     const currentList = useMemo(()=>{
       return authCtx.searchSelected
-      ? authCtx.searchexpenses
-      : authCtx.expensesListLineOfCredit;
+      ? authCtx.searchexpenses || []
+      : authCtx.expensesListLineOfCredit || [];
   
     },[authCtx.searchSelected, authCtx.searchexpenses, authCtx.expensesListLineOfCredit])
     // console.log('currentList', currentList)
