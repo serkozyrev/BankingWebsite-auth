@@ -18,12 +18,17 @@ const RevenueList = (props) => {
   const ITEMS_PER_PAGE = 5;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(currentList.length / ITEMS_PER_PAGE);
+  const totalPages = currentList?Math.ceil(currentList.length / ITEMS_PER_PAGE):0;
 
   const paginatedList = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    return currentList.slice(startIndex, endIndex);
+    if(currentList){
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+      return currentList.slice(startIndex, endIndex);
+    }
+    else{
+      return 0;
+    }
   }, [currentList, currentPage]);
 
   const prevPageHandler = () => {
