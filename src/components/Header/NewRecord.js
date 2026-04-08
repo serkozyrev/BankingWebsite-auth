@@ -248,6 +248,9 @@ const NewRecord = (props) => {
         authCtx.totalSum(data.totalChequing);
         authCtx.totalSumDina(data.totalVisa);
         authCtx.totalSumSnezhana(data.totalLineOfCredit);
+        authCtx.setTotalChequingPages(data.totalChequingPages)
+        authCtx.setTotalVisaPages(data.totalVisaPages)
+        authCtx.setTotalLineOfCreditPages(data.totalLineOfCreditPages)
       }
       
   }

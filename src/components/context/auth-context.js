@@ -26,6 +26,11 @@ export const AuthContextProvider = (props) => {
   const [accountBalanceSnezhana, setAccountBalanceSnezhana] = useState("");
   const [expenseTotalDina, setExpenseTotalDina] = useState(0);
   const [expenseTotalSnezhana, setExpenseTotalSnezhana] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalVisaPages, setTotalVisaPages] = useState(1);
+  const [totalChequingPages, setTotalChequingPages] = useState(1);
+  const [totalLineOfCreditPages, setTotalLineOfCreditPages] = useState(1);
   const [approveDeletion, setApproveDeletion] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
   const [searchexpenseDina, setSearchExpenseDina] = useState([]);
@@ -188,7 +193,7 @@ export const AuthContextProvider = (props) => {
               headers:myHeaders
           }
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/expense/all`, requestOptions
+          `${process.env.REACT_APP_BACKEND_URL}/expense/all?page=${page}&limit=${limit}`, requestOptions
         );
 
         if (!response.ok) {
@@ -206,6 +211,9 @@ export const AuthContextProvider = (props) => {
         setAccountBalanceDina(responseData.account_info.visa);
         setAccountBalanceMine(responseData.account_info.chequing); 
         setAccountBalanceSnezhana(responseData.account_info.line_of_credit);
+        setTotalChequingPages(responseData.totalChequingPages)
+        setTotalVisaPages(responseData.totalVisaPages)
+        setTotalLineOfCreditPages(responseData.totalLineOfCreditPages)
       }
       catch(error){
         console.log("expense fetch error:", error)
@@ -213,7 +221,7 @@ export const AuthContextProvider = (props) => {
     };
     
     fetchExpenses()
-  }, [authToken]);
+  }, [page, authToken]);
   const signIn = async(e)=>{
     e?.preventDefault();
 
@@ -430,6 +438,9 @@ export const AuthContextProvider = (props) => {
             totalSum(data.totalChequing);
             totalSumDina(data.totalVisa);
             totalSumSnezhana(data.totalLineOfCredit);
+            setTotalChequingPages(data.totalChequingPages)
+            setTotalVisaPages(data.totalVisaPages)
+            setTotalLineOfCreditPages(data.totalLineOfCreditPages)
           }
           setApproveDeletion(false);
         });
@@ -439,6 +450,15 @@ export const AuthContextProvider = (props) => {
   };
 
   const contextValue = {
+    page,
+    setPage,
+    limit,
+    totalVisaPages,
+    setTotalVisaPages,
+    totalChequingPages,
+    setTotalChequingPages,
+    totalLineOfCreditPages,
+    setTotalLineOfCreditPages,
     categoryMessagePopUpWindow,
     setCategoryMessagePopUpWindow,
     showConfirmCategoryMessage: showCategoryMessageHandler,

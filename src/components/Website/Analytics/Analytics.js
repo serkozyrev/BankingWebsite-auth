@@ -38,11 +38,12 @@ const Analytics = () => {
   }, []);
   return (
     <div className="analysis-container">
+      <strong><div className="text-center">!!!Scroll down to check other accounts!!!</div></strong>
       <Card className="analysis">
         <h3>Chequing</h3>
         <div className="container">
-          {authCtx.infoChequing &&
-            authCtx.infoChequing.map((info) => (
+          {authCtx.infoAnalysisMine &&
+            authCtx.infoAnalysisMine.map((info) => (
               <AnalyticsItem
                 key={info.id}
                 infoSummary={info.summary}
@@ -73,8 +74,8 @@ const Analytics = () => {
       <Card className="analysis">
         <h3>Line of Credit</h3>
         <div className="container">
-          {authCtx.infoLineOfCredit &&
-            authCtx.infoLineOfCredit.map((info) => (
+          {authCtx.infoAnalysisLineOfCredit &&
+            authCtx.infoAnalysisLineOfCredit.map((info) => (
               <AnalyticsItem
                 key={info.id}
                 infoSummary={info.summary}

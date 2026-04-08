@@ -205,6 +205,9 @@ const EditRecord = (props) => {
         authCtx.totalSum(data.totalChequing);
         authCtx.totalSumDina(data.totalVisa);
         authCtx.totalSumSnezhana(data.totalLineOfCredit);
+        authCtx.setTotalChequingPages(responseData.totalChequingPages)
+        authCtx.setTotalVisaPages(responseData.totalVisaPages)
+        authCtx.setTotalLineOfCreditPages(responseData.totalLineOfCreditPages)
       }
   }
 
