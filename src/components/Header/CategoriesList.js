@@ -121,7 +121,7 @@ const CategoriesList = (props) => {
   return (
     <form>
       <div className="mt-5 text-center">
-        <h2>New Category</h2>
+        <h2>Category List</h2>
         <p>
           Please select the category you want to delete.
         </p>        
