@@ -3,6 +3,7 @@ import AuthContext from "../../context/auth-context";
 import Button from "../../UI/Button/Button";
 import Card from "../../UI/Card/Card";
 
+
 import "./Account.css";
 import AccountDate from "./AccountDate";
 
@@ -40,6 +41,8 @@ const Account = (props) => {
   const [changeFrom, setChangeFrom] = useState("USD");
   const [changeTo, setChangeTo] = useState("CAD");
   let currency;
+
+  
   const changeFromHandler = (event) => {
     setChangeFrom(event.target.value);
   };
@@ -53,16 +56,21 @@ const Account = (props) => {
     const fetchMovies = async () => {
       // console.log(currency)
       const response = await fetch(
-        `https://www.bankofcanada.ca/valet/observations/FX${currency}/`
+        `https://www.bankofcanada.ca/valet/fx_rss/FX${currency}/`
       );
 
       if (!response.ok) {
         throw new Error("Something went wrong!");
       }
-      const responseData = await response.json();
-      let currencyWord = `FX${currency}`;
-      // console.log(currencyWord);
-      setCurrencyRate(responseData.observations[0][currencyWord].v);
+      // console.log('response', response)
+      const responseData = await response.text();
+      
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(responseData, "text/xml");
+
+      const xmlRateValue = xmlDoc.getElementsByTagName("cb:value")[0];
+      const rate=xmlRateValue.textContent
+      setCurrencyRate(rate);
     };
 
     try {
@@ -75,17 +83,23 @@ const Account = (props) => {
   const submitHandler = async (event) => {
     event.preventDefault();
     currency = changeFrom + changeTo;
+    // console.log('currency', `https://www.bankofcanada.ca/valet/fx_rss/FX${currency}/`)
     const response = await fetch(
-      `https://www.bankofcanada.ca/valet/observations/FX${currency}/`
+      `https://www.bankofcanada.ca/valet/fx_rss/FX${currency}/`
     );
 
     if (!response.ok) {
       throw new Error("Something went wrong!");
     }
-    const responseData = await response.json();
+    const responseData = await response.text();
     let currencyWord = `FX${currency}`;
-    // console.log(responseData);
-    setCurrencyRate(responseData.observations[0][currencyWord].v);
+    // console.log(responseData.);
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(responseData, "text/xml");
+
+    const xmlRateValue = xmlDoc.getElementsByTagName("cb:value")[0];
+    const rate=xmlRateValue.textContent
+    setCurrencyRate(rate);
   };
   return (
     <div className="account-container">
