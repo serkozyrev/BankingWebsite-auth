@@ -161,39 +161,23 @@ const Account = (props) => {
           })}
         </div>
       </div>
-      <Card className="account-item">
-        <div className="account-item__description">
-          <h2 className="account-item h2">Chequing</h2>
-          <div className="account-item__price">
-            CAD {authCtx.accountBalanceMine.toLocaleString("en-CA", {
-            style: "currency",
-            currency: "CAD",
-          })}
-          </div>
-        </div>
-      </Card>
-      <Card className="account-item">
-        <div className="account-item__description">
-          <h2 className="account-item h2">Visa</h2>
-          <div className="account-item__price">
-            CAD {authCtx.accountBalanceDina.toLocaleString("en-CA", {
-            style: "currency",
-            currency: "CAD",
-          })}
-          </div>
-        </div>
-      </Card>
-      <Card className="account-item">
-        <div className="account-item__description">
-          <h2 className="account-item h2">Line of Credit</h2>
-          <div className="account-item__price">
-            CAD {authCtx.accountBalanceSnezhana.toLocaleString("en-CA", {
-              style: "currency",
-              currency: "CAD",
-            })}
-          </div>
-        </div>
-      </Card>
+      {authCtx.accounts.length > 0 ? (
+        authCtx.accounts.map((account) => (
+          <Card className="account-item" key={account.id} id={account.id}>
+            <div className="account-item__description">
+              <h2 className="account-item h2">{account.description}</h2>
+              <div className="account-item__price">
+                CAD {account.amount.toLocaleString("en-CA", {
+                style: "currency",
+                currency: "CAD",
+              })}
+              </div>
+            </div>
+          </Card>
+        ))
+      ) : (
+        <p>No accounts found.</p>
+      )}
     </div>
   );
 };

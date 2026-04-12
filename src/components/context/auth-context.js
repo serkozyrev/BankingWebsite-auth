@@ -16,14 +16,16 @@ export const AuthContextProvider = (props) => {
   const [searchSelected, setSearchSelected] = useState(false);
   const [messageIsShown, setMessageIsShown] = useState(false);
   const [currencyRate, setCurrencyRate] = useState("");
-  const [expenseTotalPapa, setExpenseTotalPapa] = useState(0);
   const [expensesList, setExpensesList] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [expensesListDina, setExpensesListDina] = useState([]);
   const [expensesListLineOfCredit, setExpensesListLineOfCredit] = useState([]);
   const [revenuesList, setRevenuesList] = useState([]);
   const [accountBalanceMine, setAccountBalanceMine] = useState("");
   const [accountBalanceDina, setAccountBalanceDina] = useState("");
   const [accountBalanceSnezhana, setAccountBalanceSnezhana] = useState("");
+  const [accounts, setAccounts] = useState([]);
+  const [expenseTotalPapa, setExpenseTotalPapa] = useState(0);
   const [expenseTotalDina, setExpenseTotalDina] = useState(0);
   const [expenseTotalSnezhana, setExpenseTotalSnezhana] = useState(0);
   const [page, setPage] = useState(1);
@@ -33,6 +35,7 @@ export const AuthContextProvider = (props) => {
   const [totalLineOfCreditPages, setTotalLineOfCreditPages] = useState(1);
   const [approveDeletion, setApproveDeletion] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
+  const [searchListExpenses, setSearchListExpenses] = useState([]);
   const [searchexpenseDina, setSearchExpenseDina] = useState([]);
   const [searchexpenses, setSearchExpenses] = useState([]);
   const [searchexpenseChequing, setSearchExpenseChequing] = useState([]);
@@ -49,9 +52,12 @@ export const AuthContextProvider = (props) => {
   const [infoAnalysis, setInfoAnalysis] = useState([]);
   const [infoAnalysisMine, setInfoAnalysisMine] = useState([]);
   const [infoAnalysisLineOfCredit, setInfoAnalysisLineOfCredit] = useState([]);
+  const [info, setInfo] = useState([]);
   const [categories, setCategories] = useState([])
   const [categoryModalPopUpWindow, setCategoryModalPopUpWindow] = useState(false);
   const [categoryMessagePopUpWindow, setCategoryMessagePopUpWindow] = useState(false);
+  const [accountCreationModalPopUpWindow, setAccountCreationModalPopUpWindow] = useState(false);
+  const [accountCreationMessagePopUpWindow, setAccountCreationMessagePopUpWindow] = useState(false);
   
 
   // const rateHandler = (data) => {
@@ -94,6 +100,21 @@ export const AuthContextProvider = (props) => {
   const closeMessageHandler = () => {
     setMessageIsShown(false);
   };
+
+  
+  const deletionConfirmHandler = () => {
+    setApproveDeletion(true);
+    closeMessageHandler();
+  };
+  
+  const showSignInHandler = () => {
+    setOpenSignIn(!openSignIn);
+  }
+
+  const showSignUpHandler = () => {
+    setOpenSignUp(!openSignUp);
+  };
+
   const showCategoryMessageHandler = () => {
     setCategoryMessagePopUpWindow(true);
   };
@@ -101,24 +122,28 @@ export const AuthContextProvider = (props) => {
   const closeCategoryMessageHandler = () => {
     setCategoryMessagePopUpWindow(false);
   };
-
-  const deletionConfirmHandler = () => {
-    setApproveDeletion(true);
-    closeMessageHandler();
-  };
-
-  const showSignInHandler = () => {
-    setOpenSignIn(!openSignIn);
-  }
-  const showSignUpHandler = () => {
-    setOpenSignUp(!openSignUp);
-  };  
+  
   const newCategoryRecordShowHandler = () => {
     setCategoryModalPopUpWindow(true)
   };
 
   const newCategoryRecordCloseHandler = () => {
     setCategoryModalPopUpWindow(false)
+  };
+  const showAccountCreationMessageHandler = () => {
+    setAccountCreationMessagePopUpWindow(true);
+  };
+
+  const closeAccountCreationMessageHandler = () => {
+    setAccountCreationMessagePopUpWindow(false);
+  };
+
+  const newAccountCreationShowHandler = () => {
+    setAccountCreationModalPopUpWindow(true)
+  };
+
+  const newAccountCreationCloseHandler = () => {
+    setAccountCreationModalPopUpWindow(false)
   };
 
   useEffect(()=>{
@@ -148,39 +173,6 @@ export const AuthContextProvider = (props) => {
       }
       fetchCategories()
     },[authToken])
-  useEffect(() => {
-      if(!authToken) return;
-      const fetchRevenues = async () => {
-        try{
-          const myHeaders= new Headers()
-          myHeaders.append('Authorization', 'Bearer ' + authToken)
-          const requestOptions={
-                method:'GET',
-                headers:myHeaders
-            }
-          const response = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/revenue/all`, requestOptions
-          );
-    
-          if (!response.ok) {
-            const err = await response.json().catch(() => null);
-            console.log("fetch /revenue/all failed", response.status, err);
-            throw new Error(err?.detail || "Something went wrong!");
-          }
-          const responseData = await response.json();
-          // console.log('responseData', responseData)
-          setRevenuesList(responseData.revenues);
-          setAccountBalanceDina(responseData.account_info.visa);
-          setAccountBalanceMine(responseData.account_info.chequing); 
-          setAccountBalanceSnezhana(responseData.account_info.line_of_credit);
-        }
-        catch(error){
-          console.log("expense fetch error:", error)
-        }
-      };
-      
-      fetchRevenues()
-    }, [authToken]);
 
   useEffect(() => {
     if(!authToken) return;
@@ -193,7 +185,7 @@ export const AuthContextProvider = (props) => {
               headers:myHeaders
           }
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/expense/all?page=${page}&limit=${limit}`, requestOptions
+          `${process.env.REACT_APP_BACKEND_URL}/expense/all`, requestOptions
         );
 
         if (!response.ok) {
@@ -202,18 +194,13 @@ export const AuthContextProvider = (props) => {
           throw new Error(err?.detail || "Something went wrong!");
         }
         const responseData = await response.json();
-        setExpensesListDina(responseData.expensesVisa);
-        setExpensesList(responseData.expensesChequing);
-        setExpensesListLineOfCredit(responseData.expensesLineOfCredit);
+        console.log(responseData)
         totalSum(responseData.totalChequing);
         totalSumDina(responseData.totalVisa);
         totalSumSnezhana(responseData.totalLineOfCredit);
-        setAccountBalanceDina(responseData.account_info.visa);
-        setAccountBalanceMine(responseData.account_info.chequing); 
-        setAccountBalanceSnezhana(responseData.account_info.line_of_credit);
-        setTotalChequingPages(responseData.totalChequingPages)
-        setTotalVisaPages(responseData.totalVisaPages)
-        setTotalLineOfCreditPages(responseData.totalLineOfCreditPages)
+        setExpenses(responseData.expenses)
+        
+        setAccounts(responseData.account_info.accounts)
       }
       catch(error){
         console.log("expense fetch error:", error)
@@ -222,6 +209,8 @@ export const AuthContextProvider = (props) => {
     
     fetchExpenses()
   }, [page, authToken]);
+
+  // console.log('accounts', accounts)
   const signIn = async(e)=>{
     e?.preventDefault();
 
@@ -289,6 +278,8 @@ export const AuthContextProvider = (props) => {
   }  
 
   const signOut= useCallback((event)=>{
+    setExpenses([])
+    setAccounts([])
     setAuthToken(null)
     setAuthTokenType(null)
     setUserId(null)
@@ -376,7 +367,7 @@ export const AuthContextProvider = (props) => {
         headers: myHeaders,
         body: JSON.stringify({
           id: id,
-          type: type,
+          // type: type,
         }),
       })
         .then((res) => {
@@ -386,15 +377,12 @@ export const AuthContextProvider = (props) => {
         })
         .then((data) => {
           console.log('data', data)
-          setAccountBalanceDina(data.account_info.visa);
-          setAccountBalanceMine(data.account_info.chequing); 
-          setAccountBalanceSnezhana(data.account_info.line_of_credit);            
+          setAccounts(data.account_info.accounts)          
           if(type==='revenue'){
             setRevenuesList(data.revenues);
           }
           else{
-            setExpensesList(data.expensesChequingLineOfCredit);
-            setExpensesListDina(data.expensesVisa);
+            setExpenses(data.expenses)
             totalSum(data.totalChequing);
             totalSumDina(data.totalVisa);
             totalSumSnezhana(data.totalLineOfCredit);
@@ -405,19 +393,17 @@ export const AuthContextProvider = (props) => {
     }
   };
 
-  const deleteEntry = (id, type) => {
+  const deleteEntry = (id) => {
     try {
       const myHeaders= new Headers()
       myHeaders.append('Authorization', 'Bearer ' + authToken)
       myHeaders.append("Content-Type", "application/json")
-      fetch(`${process.env.REACT_APP_BACKEND_URL}/${
-        type === "revenue" ? "revenue" : "expense"
-      }/deleterecord`, {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/expense/deleterecord`, {
         method: "POST",
         headers: myHeaders,
         body: JSON.stringify({
-          id: id,
-          type: type,
+          id: id
+          // type: type,
         }),
       })
         .then((res) => {
@@ -426,22 +412,14 @@ export const AuthContextProvider = (props) => {
           }
         })
         .then((data) => {
-          setAccountBalanceDina(data.account_info.visa);
-          setAccountBalanceMine(data.account_info.chequing); 
-          setAccountBalanceSnezhana(data.account_info.line_of_credit);            
-          if(type==='revenue'){
-            setRevenuesList(data.revenues);
-          }
-          else{
-            setExpensesList(data.expensesChequingLineOfCredit);
-            setExpensesListDina(data.expensesVisa);
-            totalSum(data.totalChequing);
-            totalSumDina(data.totalVisa);
-            totalSumSnezhana(data.totalLineOfCredit);
-            setTotalChequingPages(data.totalChequingPages)
-            setTotalVisaPages(data.totalVisaPages)
-            setTotalLineOfCreditPages(data.totalLineOfCreditPages)
-          }
+          console.log('data',data)
+          setAccounts(data.account_info.accounts)
+          totalSum(data.totalChequing);
+          totalSumDina(data.totalVisa);
+          totalSumSnezhana(data.totalLineOfCredit);
+          setExpenses(data.expenses)
+          
+          
           setApproveDeletion(false);
         });
     } catch (e) {
@@ -450,6 +428,14 @@ export const AuthContextProvider = (props) => {
   };
 
   const contextValue = {
+    info,
+    setInfo,
+    setSearchListExpenses,
+    searchListExpenses,
+    setExpenses,
+    expenses,
+    accounts,
+    setAccounts,
     page,
     setPage,
     limit,
@@ -461,10 +447,18 @@ export const AuthContextProvider = (props) => {
     setTotalLineOfCreditPages,
     categoryMessagePopUpWindow,
     setCategoryMessagePopUpWindow,
+    setAccountCreationMessagePopUpWindow,
+    accountCreationMessagePopUpWindow,
+    accountCreationModalPopUpWindow,
+    setAccountCreationModalPopUpWindow,
     showConfirmCategoryMessage: showCategoryMessageHandler,
     closeConfirmCategoryMessage: closeCategoryMessageHandler,
     showCategoryModal:newCategoryRecordShowHandler,
     closeCategoryModal:newCategoryRecordCloseHandler,
+    showConfirmAccountCreationMessage: showAccountCreationMessageHandler,
+    closeConfirmAccountCreationMessage: closeAccountCreationMessageHandler,
+    showAccountCreationModal:newAccountCreationShowHandler,
+    closeAccountCreationModal:newAccountCreationCloseHandler,
     categoryModalPopUpWindow,
     setInfoAnalysis,
     setInfoAnalysisMine,

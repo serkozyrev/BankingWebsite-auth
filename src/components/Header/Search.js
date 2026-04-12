@@ -38,6 +38,7 @@ const Search = (props) => {
         })
         .then((data) => {
           authCtx.setSearchSelected(true);
+          authCtx.setSearchListExpenses(data.searchExpenses)
           authCtx.setSearchExpenses(data.expensesList);
           authCtx.setSearchExpenseDina(data.expensesListVisa);
           authCtx.setSearchExpenseChequing(data.expenseListCheqing);

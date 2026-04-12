@@ -13,7 +13,7 @@
   text-align: center;
 }
 
-.revenue-list h3 {
+.revenue-list.h3 {
   text-align: center;
 }
 
@@ -22,4 +22,10 @@
   overflow-y: scroll;
   padding: 6px;
   height: 30rem;
+}
+
+.transaction-body {
+  width: 36rem;
+  height: 38rem;
+  margin-bottom: 20px;
 }

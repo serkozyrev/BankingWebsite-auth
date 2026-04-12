@@ -20,6 +20,10 @@ const NewRecord = (props) => {
   const [validatedDate, setValidDate] = useState();
   const [providedAccount, setProvidedAccount] = useState("");
   const [validatedAccount, setValidAccount] = useState();
+
+  const [providedTargetAccountId, setProvidedTargetAccountId] = useState("");
+  const [validatedTargetAccount, setValidTargetAccount] = useState();
+
   const [isChecked, setIsChecked] = useState(false)
 
   
@@ -98,6 +102,14 @@ const NewRecord = (props) => {
     setIsChecked(!isChecked)
   }
 
+  const targetAccountHandler = (event) => {
+    setProvidedTargetAccountId(event.target.value);
+  };
+
+  const validateTargetAccountHandler = () => {
+    setValidTargetAccount(providedTargetAccountId !== "");
+  };
+
   const amountHandler = (event) => {
     setProvidedAmount(event.target.value);
   };
@@ -153,12 +165,26 @@ const NewRecord = (props) => {
     setValidAccount(providedAccount !== "");
   };
   // console.log("providedCategory", providedCategory)
-  
+  const allAccounts = authCtx.accounts || [];
+
+  const selectedAccount = allAccounts.find(
+    (account) => String(account.id) === String(providedAccount)
+  );
+
+  const transferTargetAccounts = allAccounts.filter(
+    (account) => String(account.id) !== String(providedAccount)
+  );
+
+  const revenueAccounts = allAccounts.filter((account) =>
+    account.description?.toLowerCase().includes("chequing")
+  );
   
     const isAIDisabled = !providedAIDescription
   
-    const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDate || !providedCategory || !providedType
+    // const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDate || !providedCategory || !providedType
 
+    const isDisabled = !providedAmount || Number(providedAmount) <= 0 || !providedDate || !providedCategory || !providedType || !providedAccount || (providedType === "transfer" && !providedTargetAccountId);
+  
 
 
   const submitHandler = async(event) => {
@@ -179,7 +205,7 @@ const NewRecord = (props) => {
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/ai/parse-entry`, requestAIOptions)
     
         if(!res.ok){
-          const err=(await res).json().catch(()=>null)
+          const err=await res.json().catch(()=>null)
           throw new Error(err?.detail || "Failed to add record")
         }
         const data = await res.json()
@@ -202,22 +228,26 @@ const NewRecord = (props) => {
       }
     }else{
       const requestPostOptions={
-          method: "POST",
-          headers: myHeaders,
-          body: JSON.stringify({
-            "transaction_type": providedType,
-            "description": providedDescription,
-            "date": providedDate,
-            "category": providedCategory,
-            "expense_balance": providedAmount,
-            "account_type": providedAccount
-          }),
-        }
-        try{
-          await postingNewRecord('expense',requestPostOptions)
-        }catch(e){
-          console.log(e)
-        }
+        method: "POST",
+        headers: myHeaders,
+        body: JSON.stringify({
+          "description": providedDescription,
+          "expense_balance": providedAmount,
+          "date": providedDate,
+          "category": providedType === "transfer" ? "transfer" : providedCategory,
+          "transaction_type": providedType,
+          "account_id": Number(providedAccount),
+          "account_type": providedDescription,
+          ...(providedType === "transfer" && {
+            "target_account_id": Number(providedTargetAccountId)})
+        }),
+      }
+      try{
+        await postingNewRecord('expense',requestPostOptions)
+      }catch(e){
+        console.log(e)
+        alert(e.detail)
+      }
       
     }
   };
@@ -227,7 +257,7 @@ const NewRecord = (props) => {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/${transactionType}`, requestPostOptions)
       
       if(!res.ok){
-        const err=(await res).json().catch(()=>null)
+        const err=await res.json().catch(()=>null)
         throw new Error(err?.detail || "Failed to add record")
       }
       const data = await res.json()
@@ -235,22 +265,19 @@ const NewRecord = (props) => {
 
       authCtx.closeModal();
       props.infoBool();
-      authCtx.setAccountBalanceDina(data.account_info.visa);
-      authCtx.setAccountBalanceMine(data.account_info.chequing); 
-      authCtx.setAccountBalanceSnezhana(data.account_info.line_of_credit);            
+      authCtx.setAccounts(data.account_info.accounts)
+      // authCtx.setAccountBalanceDina(data.account_info.visa);
+      // authCtx.setAccountBalanceMine(data.account_info.chequing); 
+      // authCtx.setAccountBalanceSnezhana(data.account_info.line_of_credit);            
       if(transactionType==='revenue'){
         authCtx.setRevenuesList(data.revenues);
       }
       else{
-        authCtx.setExpensesList(data.expensesChequing);
-        authCtx.setExpensesListDina(data.expensesVisa);
-        authCtx.setExpensesListLineOfCredit(data.expensesLineOfCredit)
+        console.log('data', data)
         authCtx.totalSum(data.totalChequing);
         authCtx.totalSumDina(data.totalVisa);
         authCtx.totalSumSnezhana(data.totalLineOfCredit);
-        authCtx.setTotalChequingPages(data.totalChequingPages)
-        authCtx.setTotalVisaPages(data.totalVisaPages)
-        authCtx.setTotalLineOfCreditPages(data.totalLineOfCreditPages)
+        authCtx.setExpenses(data.expenses||[])
       }
       
   }
@@ -350,9 +377,13 @@ const NewRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    <option value="Chequing">Chequing</option>
-                    {/* <option value="Visa">Visa</option> */}
-                    {/* <option value="LineOfCredit">Line of Credit</option> */}
+                    {authCtx.accounts
+                      .filter((account) => account.account_kind==='asset')
+                      .map((account) => (
+                        <option key={account.id} id={account.id} value={account.id}>
+                          {account.description}
+                        </option>
+                    ))}
                   </select>
                   {validatedAccount === false && (
                     <p className="error-check">
@@ -464,7 +495,7 @@ const NewRecord = (props) => {
                   }`}
                 >
                   <h6 className="form-label" htmlFor="account">
-                    Type of Account
+                    Transfer money from
                   </h6>
                   <select
                     id="gender"
@@ -475,13 +506,15 @@ const NewRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    <option value="Chequing">Chequing</option>{/* PapaAccount */}
-                    <option value="Visa">Visa</option>{/* DinaAccount */}
-                    <option value="LineOfCredit">Line of Credit</option>{/* SnezhanaAccount */}
+                    {authCtx.accounts.map((account) => (
+                        <option key={account.id} id={account.id} value={account.id}>
+                          {account.description}
+                        </option>
+                      ))}
                   </select>
                   {validatedAccount === false && (
                     <p className="error-check">
-                      Please, select type of account
+                      Please, select from what account you want to grab money
                     </p>
                   )}
                 </div>
@@ -501,20 +534,37 @@ const NewRecord = (props) => {
                     onBlur={validateCategoryHandler}
                     required
                   >
+                    <option defaultValue>Choose...</option> 
+                    <option value="transfer">Transfer</option>
+                    
+                  </select>                  
+                </div>
+                <div
+                  className={`control ${
+                    validatedTargetAccount === false ? "invalid" : "check"
+                  }`}
+                >
+                  <h6 className="form-label" htmlFor="category">
+                    To
+                  </h6>
+                  <select
+                    id="gender"
+                    className="form-select field"
+                    value={providedTargetAccountId}
+                    onChange={targetAccountHandler}
+                    onBlur={validateTargetAccountHandler}
+                    required
+                  >
                     <option defaultValue>Choose...</option>                    
-                    {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
-                      Transfer to Visa
-                    </option>)}
-                    {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
-                      Transfer to Line of Credit
-                    </option>)}
-                    {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
-                      Transfer to Chequing
-                    </option>)}
+                    {authCtx.accounts.map((account) => (
+                        <option key={account.id} id={account.id} value={account.id}>
+                          {account.description}
+                        </option>
+                      ))}
                   </select>
-                  {validatedCategory === false && (
+                  {(validatedTargetAccount === false || providedAccount === providedTargetAccountId) && (
                     <p className="error-check">
-                      Please, select transfer category
+                      Please, select where you want to transfer money. From and To options cannot be the same.
                     </p>
                   )}
                 </div>
@@ -608,9 +658,11 @@ const NewRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    <option value="Visa">Visa</option>{/* DinaAccount */}
-                    <option value="Chequing">Chequing</option>{/* PapaAccount */}
-                    <option value="LineOfCredit">Line of Credit</option>{/* SnezhanaAccount */}
+                    {authCtx.accounts.map((account) => (
+                        <option key={account.id} id={account.id} value={account.id}>
+                          {account.description}
+                        </option>
+                      ))}
                   </select>
                   {validatedAccount === false && (
                     <p className="error-check">
@@ -639,27 +691,11 @@ const NewRecord = (props) => {
                       <option value="">Choose...</option>
                       <option value="addNew">Add New</option>
                       {authCtx.categories.map((category) => (
-                        <option key={category.category_id} value={category.category_name}>
+                        <option key={category.category_id} id={category.category_id} value={category.category_name}>
                           {category.description}
                         </option>
                       ))}
                     </select>
-
-                    {/* <div className="form-check d-flex flex-column align-items-center justify-content-center m-0 p-0">
-                      <input
-                        type="checkbox"
-                        className="form-check-input m-0"
-                        id="flexCheckDefault"
-                        checked={isCheckedNewCategory}
-                        onChange={handleIsCheckedNewCategory}
-                      />
-                      <label
-                        className="form-check-label mt-1 text-center"
-                        htmlFor="flexCheckDefault"
-                      >
-                        New
-                      </label>
-                    </div> */}
 
                   </div>
                   {validatedCategory === false && (

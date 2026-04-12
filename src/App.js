@@ -25,7 +25,7 @@ const App = () => {
       <Header />
       <Routes>
         <Route exact path="/" element={<ExpensesWebsite />} />
-        <Route path="/edit/:rid/:type" element={<EditRecord />} />
+        <Route path="/edit/:rid" element={<EditRecord />} />
         <Route path="analysis" element={<Analytics />}  />
       </Routes>
     </Suspense>

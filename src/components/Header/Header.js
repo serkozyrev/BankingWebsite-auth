@@ -9,11 +9,13 @@ import NewRecord from "./NewRecord";
 import Button from "../UI/Button/Button";
 import Search from "./Search";
 import CategoriesList from "./CategoriesList"
+import AccountCreation from "./AccountCreation";
 
 const Header = (props) => {
   const [dataInfo, setDataInfo] = useState("");
   const [infoAfterMessage, setInfoAfterMessage] = useState(false);
   const [categoryModalWindow, setCategoryModalWindow] = useState(false);
+  const [accountCreationModalWindow, setAccountCreationModalWindow] = useState(false);
   // const [categoryModalPopUpWindow, setCategoryModalPopUpWindow] = useState(false);
   const authCtx = useContext(AuthContext);
 
@@ -25,12 +27,20 @@ const Header = (props) => {
     authCtx.showCategoryModal()
   };
 
+  const newAccountCreationHandler = () => {
+    authCtx.showAccountCreationModal()
+  };
+
   const dataInformation = (data) => {
     setDataInfo(data);
   };
 
   const showCloseCategoryModalHandler=()=>{
     setCategoryModalWindow(!categoryModalWindow)
+  }
+
+  const showCloseAccountCreationModalHandler=()=>{
+    setAccountCreationModalWindow(!accountCreationModalWindow)
   }
 
   const showCloseModalHandler = () => {
@@ -103,6 +113,13 @@ const Header = (props) => {
               >
                 List of Categories
               </Nav.Link>
+              <Nav.Link
+                type="button"
+                onClick={newAccountCreationHandler}
+                className="forgot_pass d-flex justify-content-start"
+              >
+                Create Account
+              </Nav.Link>
             </Nav>
           <Search /></>)
           }
@@ -138,12 +155,27 @@ const Header = (props) => {
           }
         />
       )} 
+      {authCtx.accountCreationModalPopUpWindow && (
+        <Modal
+          onClose={authCtx.closeAccountCreationModal}
+          info={
+            <AccountCreation
+              dataFunc={dataInformation}
+              infoBool={showCloseAccountCreationModalHandler}
+            />
+          }
+        />
+      )} 
       {infoAfterMessage && authCtx.popupIsShown === false && (
         <Modal onClose={showCloseModalHandler} info={dataInfo} time />
       )}
 
       {categoryModalWindow && authCtx.categoryModalPopUpWindow === false && (
         <Modal onClose={showCloseCategoryModalHandler} info={dataInfo} time />
+      )}
+
+      {accountCreationModalWindow && authCtx.accountCreationModalPopUpWindow === false && (
+        <Modal onClose={showCloseAccountCreationModalHandler} info={dataInfo} time />
       )}
     </Navbar>
   );

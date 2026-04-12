@@ -1,8 +1,6 @@
 import React from "react";
 
 import Card from "../UI/Card/Card";
-import ExpensesList from "./ExpensesPapa/ExpensesList";
-import ExpensesListDina from "./ExpenseDina/ExpensesListDina";
 import RevenueList from "./Revenue/RevenueList";
 
 
@@ -19,15 +17,7 @@ const ExpensesWebsite = (props) => {
         </Card>
       </div>
       <div className="transaction-container">
-        <Card className="transaction-body">
-          <RevenueList />
-        </Card>
-        <Card className="transaction-body">
-          <ExpensesListDina />
-        </Card>
-        <Card className="transaction-body">
-          <ExpensesList />
-        </Card>
+        <RevenueList/>
       </div>
     </div>
   );

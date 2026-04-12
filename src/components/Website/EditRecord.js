@@ -21,9 +21,20 @@ const EditRecord = (props) => {
   const [validatedDate, setValidDate] = useState();
   const [providedAccount, setProvidedAccount] = useState("");
   const [validatedAccount, setValidAccount] = useState();
+  const [providedType, setProvidedType] = useState("");
+
+  const [providedTargetAccountId, setProvidedTargetAccountId] = useState("");
+  const [validatedTargetAccount, setValidTargetAccount] = useState();
 
   const recordId = useParams().rid;
-  const recordType = useParams().type;
+
+  const targetAccountHandler = (event) => {
+    setProvidedTargetAccountId(event.target.value);
+  };
+
+  const validateTargetAccountHandler = () => {
+    setValidTargetAccount(providedTargetAccountId !== "");
+  };
 
   const editamountHandler = (event) => {
     setProvidedAmount(event.target.value);
@@ -67,90 +78,63 @@ const EditRecord = (props) => {
   const isDisabled = !providedAmount || Number(providedAmount) <=0 || !providedDescription || !providedDate || !providedCategory
 
   useEffect(() => {
-  const runDelete = async () => {
-    if (!authCtx.approveDeletion) return;
+    const runDelete = async () => {
+      if (!authCtx.approveDeletion) return;
 
-    try {
-      await authCtx.deleteEntry(recordId, recordType);
-      history("/");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+      try {
+        await authCtx.deleteEntry(recordId);
+        history("/");
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  runDelete();
-}, [authCtx.approveDeletion, authCtx, recordId, recordType, history]);
+    runDelete();
+  }, [authCtx.approveDeletion, authCtx, recordId, history]);
 
   useEffect(() => {
     const fetchPlace = async () => {
       try {
+        const myHeaders= new Headers()
+        myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
+        myHeaders.append('Content-Type','application/json')
         const responseData = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/getbyid`,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: myHeaders,
             body: JSON.stringify({
-              id: recordId,
-              type: recordType,
+              id: recordId
+              // type: recordType,
             }),
           }
         );
         const res = await responseData.json();
         // console.log('res',res)
         console.log('res.expense', res.expense)
-        if (res.expense) {
-          setProvidedAmount(res.expense.amount);
-          setProvidedDescription(res.expense.description);
-          setProvidedCategory(res.expense.category);
-          setProvidedAccount(res.expense.accountType);
-        } else if (res.revenue) {
-          setProvidedAmount(res.revenue.amount);
-          setProvidedDescription(res.revenue.description);
-          setProvidedCategory(res.revenue.category);
-          setProvidedAccount(res.revenue.accountType);
-        }
+        
+        setProvidedAmount(res.expense.amount);
+        setProvidedDescription(res.expense.description);
+        setProvidedCategory(res.expense.category);
+        setProvidedAccount(res.expense.account_id);
+        setProvidedType(res.expense.type)
+        setProvidedTargetAccountId(res.expense.transactionById)
+        
         let date;
-        if (res.expense) {
-          if (res.expense.month < 10 || res.expense.day < 10) {
-            date =
-              res.expense.year +
-              "-0" +
-              res.expense.month +
-              "-0" +
-              res.expense.day;
-          } else {
-            date =
-              res.expense.year +
-              "-" +
-              res.expense.month +
-              "-" +
-              res.expense.day;
-          }
-          setProvidedDate(date);
-        } else if (res.revenue) {
-          if (res.revenue.month < 10 || res.revenue.day < 10) {
-            date =
-              res.revenue.year +
-              "-0" +
-              res.revenue.month +
-              "-0" +
-              res.revenue.day;
-          } else {
-            date =
-              res.revenue.year +
-              "-" +
-              res.revenue.month +
-              "-" +
-              res.revenue.day;
-          }
-          setProvidedDate(date);
-        }
+        
+        
+        date =
+            res.expense.year +
+            (res.expense.month < 10?"-0":"-") +
+            res.expense.month +
+            (res.expense.day < 10?"-0":"-") +
+            res.expense.day;
+        setProvidedDate(date);
+        
       } catch (err) {}
     };
     fetchPlace();
-  }, [recordId, recordType]);
+  }, [recordId]);
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -165,12 +149,15 @@ const EditRecord = (props) => {
           headers: myHeaders,
           body: JSON.stringify({
             "id": recordId,
-            "transaction_type": recordType,
             "description": providedDescription,
             "expense_balance": providedAmount,
             "date": providedDate,
-            "account_type":providedAccount,
-            "category": providedCategory
+            "category": providedType === "transfer" ? "transfer" : providedCategory,
+            "transaction_type": providedType,
+            "account_id": Number(providedAccount),
+            "account_type": providedDescription,
+            ...(providedType === "transfer" && {
+              "target_account_id": Number(providedTargetAccountId)})
           }),
         }      
         await postingEditedRecord('expense',requestPatchOptions)
@@ -192,22 +179,15 @@ const EditRecord = (props) => {
         throw new Error(responseData?.detail ? JSON.stringify(responseData.detail) : "Failed to edit record")
       }
       const data = responseData
-      authCtx.setAccountBalanceDina(data.account_info.visa);
-      authCtx.setAccountBalanceMine(data.account_info.chequing); 
-      authCtx.setAccountBalanceSnezhana(data.account_info.line_of_credit);            
+      authCtx.setAccounts(data.account_info.accounts)         
       if(transactionType==='revenue'){
         authCtx.setRevenuesList(data.revenues);
       }
       else{
-        authCtx.setExpensesList(data.expensesChequing);
-        authCtx.setExpensesListDina(data.expensesVisa);
-        authCtx.setExpensesListLineOfCredit(data.expensesLineOfCredit)
         authCtx.totalSum(data.totalChequing);
         authCtx.totalSumDina(data.totalVisa);
         authCtx.totalSumSnezhana(data.totalLineOfCredit);
-        authCtx.setTotalChequingPages(responseData.totalChequingPages)
-        authCtx.setTotalVisaPages(responseData.totalVisaPages)
-        authCtx.setTotalLineOfCreditPages(responseData.totalLineOfCreditPages)
+        authCtx.setExpenses(data.expenses)
       }
   }
 
@@ -245,7 +225,7 @@ const EditRecord = (props) => {
                   <p className="error-check">Please select record's date</p>
                 )}
               </div>
-              {recordType === "revenue" && (
+              {providedType === "revenue" && (
                 <div>
                   <div
                     className={`control ${
@@ -264,9 +244,13 @@ const EditRecord = (props) => {
                       required
                     >
                       <option defaultValue>Choose...</option>
-                      <option value="Chequing">Chequing</option>
-                      {/* <option value="Visa">Visa</option> */}
-                      {/* <option value="LineOfCredit">Line of Credit</option> */}
+                      {authCtx.accounts
+                        .filter((account) => account.account_kind==='asset')
+                        .map((account) => (
+                          <option key={account.id} id={account.id} value={account.id}>
+                            {account.description}
+                          </option>
+                      ))}
                     </select>
                     {validatedAccount === false && (
                       <p className="error-check">
@@ -291,7 +275,7 @@ const EditRecord = (props) => {
                       required
                     >
                       <option defaultValue>Choose...</option>
-                      {(providedAccount==='Chequing')&& (<option value="salary">Salary</option>)}
+                      <option value="salary">Salary</option>
                     </select>
                     {validatedCategory === false && (
                       <p className="error-check">
@@ -301,7 +285,7 @@ const EditRecord = (props) => {
                   </div>
                 </div>
               )}
-              {recordType === "transfer" && (
+              {providedType === "transfer" && (
                 <div>
                   <div
                     className={`control ${
@@ -309,7 +293,7 @@ const EditRecord = (props) => {
                     }`}
                   >
                     <h6 className="form-label" htmlFor="account">
-                      Type of Account
+                      From
                     </h6>
                     <select
                       id="gender"
@@ -320,13 +304,15 @@ const EditRecord = (props) => {
                       required
                     >
                       <option defaultValue>Choose...</option>
-                      <option value="Chequing">Chequing</option>
-                      <option value="Visa">Visa</option>
-                      <option value="LineOfCredit">Line of Credit</option>
+                      {authCtx.accounts.map((account) => (
+                        <option key={account.id} id={account.id} value={account.id}>
+                          {account.description}
+                        </option>
+                      ))}
                     </select>
                     {validatedAccount === false && (
                       <p className="error-check">
-                        Please, select type of account
+                        Please, select from what account you want to grab money
                       </p>
                     )}
                   </div>
@@ -336,7 +322,7 @@ const EditRecord = (props) => {
                     }`}
                   >
                     <h6 className="form-label" htmlFor="category">
-                      Category
+                      To
                     </h6>
                     <select
                       id="gender"
@@ -346,26 +332,42 @@ const EditRecord = (props) => {
                       onBlur={editvalidateCategoryHandler}
                       required
                     >
-                      <option defaultValue>Choose...</option>
-                      {(providedAccount==='Chequing' || providedAccount==='LineOfCredit') && (<option value="transferToVisa">
-                        Transfer to Visa
-                      </option>)}
-                      {(providedAccount==='Visa' || providedAccount==='Chequing') && (<option value="transferToLineOfCredit">
-                        Transfer to Line of Credit
-                      </option>)}
-                      {(providedAccount==='Visa' || providedAccount==='LineOfCredit') && (<option value="transferToChequing">
-                        Transfer to Chequing
-                      </option>)}
+                      <option value="transfer">Transfer</option>
                     </select>
-                    {validatedCategory === false && (
+                    
+                  </div>
+                  <div
+                    className={`control ${
+                      validatedTargetAccount === false ? "invalid" : "check"
+                    }`}
+                  >
+                    <h6 className="form-label" htmlFor="category">
+                      To
+                    </h6>
+                    <select
+                      id="gender"
+                      className="form-select field"
+                      value={providedTargetAccountId}
+                      onChange={targetAccountHandler}
+                      onBlur={validateTargetAccountHandler}
+                      required
+                    >
+                      <option defaultValue>Choose...</option>                    
+                      {authCtx.accounts.map((account) => (
+                          <option key={account.id} id={account.id} value={account.id}>
+                            {account.description}
+                          </option>
+                        ))}
+                    </select>
+                    {(validatedTargetAccount === false || providedAccount === providedTargetAccountId) && (
                       <p className="error-check">
-                        Please, select category
+                        Please, select where you want to transfer money. From and To options cannot be the same.
                       </p>
                     )}
                   </div>
                 </div>
               )}
-              {recordType === "expense" && (
+              {providedType === "expense" && (
                 <>
                 <div
                   className={`control ${
@@ -385,26 +387,9 @@ const EditRecord = (props) => {
                   >
                     <option defaultValue>Choose...</option>
                     {authCtx.categories.map((category) => (
-                      <option key={category.category_id} value={category.category_name}>{category.description}</option>
+                      <option key={category.category_id} id={category.category_id} value={category.category_name}>
+                        {category.description}</option>
                     ))}
-                    {/* <option value="condoFee">Condo Fee</option>
-                    <option value="propertyTax">Property Tax</option>
-                    <option value="enercare">Enercare</option>
-                    <option value="enbridge">Enbridge</option>
-                    <option value="hydro">Hydro</option>
-                    <option value="water">Water</option>
-                    <option value="carInsurance">Car Insurance</option>
-                    <option value="cellPhoneExpenses">Cell Phone Expenses</option>
-                    <option value="rrsp">RRSP</option>
-                    <option value="bankCharges">Bank Charges</option>
-                    <option value="officeSupplies">Office Supplies</option>
-                    <option value="homeExpenses">Home Expenses</option>
-                    <option value="catExpenses">Cat Expenses</option>                    
-                    <option value="grocery">Grocery</option>
-                    <option value="computerExpenses">Computer Expenses</option>
-                    <option value="clothes">Clothes</option>
-                    <option value="medicine">Medicine</option>
-                    <option value="otherPayment">Other Payments</option> */}
                   </select>
                   {validatedCategory === false && (
                     <p className="error-check">
@@ -429,9 +414,11 @@ const EditRecord = (props) => {
                     required
                   >
                     <option defaultValue>Choose...</option>
-                    <option value="Visa">Visa</option>{/* DinaAccount */}
-                    <option value="Chequing">Chequing</option>{/* PapaAccount */}
-                    <option value="LineOfCredit">Line of Credit</option>{/* SnezhanaAccount */}
+                    {authCtx.accounts.map((account) => (
+                        <option key={account.id} id={account.id} value={account.id}>
+                          {account.description}
+                        </option>
+                      ))}
                   </select>
                   {validatedAccount === false && (
                     <p className="error-check">

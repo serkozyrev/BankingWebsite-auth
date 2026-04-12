@@ -6,7 +6,11 @@ const ConfirmMessage = (props) => {
   const authCtx = useContext(AuthContext);
   return (
     <>
-      <h3>Do you really want to delete this record?</h3>
+      {props.account ? (
+        <h3>{props.account}</h3>
+      ):(
+        <h3>Do you really want to delete this record?</h3>
+      )}
       <Button onClick={props.infoBool}>Confirm</Button>
       <Button onClick={authCtx.closeMessage}>Cancel</Button>
     </>

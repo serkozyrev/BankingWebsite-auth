@@ -12,7 +12,7 @@ const RevenueItem = (props) => {
   const [mouseInside, setMouseInside] = useState(false);
   const [monthDate, setMonthDate] = useState("");
   let date = new Date(props.year, monthDate, props.day);
-  const type = "revenue";
+  const type = "expense";
   const mouseEnter = () => {
     setMouseInside(true);
   };
@@ -56,7 +56,7 @@ const RevenueItem = (props) => {
                 <Button
                   className="login"
                   inverse
-                  to={`/edit/${props.id}/${type}`}
+                  to={`/edit/${props.id}`}
                 >
                   {" "}
                   Edit{" "}
