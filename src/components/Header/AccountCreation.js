@@ -113,8 +113,6 @@ const AccountCreation = (props) => {
                     <p className="error-check">Please select record's date</p>
                     )}
                 </div>
-            </div>
-            <div className="col-8 mb-4 mt-3">
                 <div
                     className={`control ${
                     validatedAccountKind === false ? "invalid" : "check"
