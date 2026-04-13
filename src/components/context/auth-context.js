@@ -194,7 +194,7 @@ export const AuthContextProvider = (props) => {
           throw new Error(err?.detail || "Something went wrong!");
         }
         const responseData = await response.json();
-        console.log(responseData)
+        // console.log(responseData)
         totalSum(responseData.totalChequing);
         totalSumDina(responseData.totalVisa);
         totalSumSnezhana(responseData.totalLineOfCredit);
