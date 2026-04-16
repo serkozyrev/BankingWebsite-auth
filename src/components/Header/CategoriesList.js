@@ -61,7 +61,7 @@ const CategoriesList = (props) => {
     }
     
     hostAllCategories(requestOptions)
-  },[authCtx.authToken, hostAllCategories])  
+  },[authCtx.authToken, hostAllCategories])
   
   const submitHandler = useCallback(async(event) => {
     event?.preventDefault();
@@ -125,26 +125,26 @@ const CategoriesList = (props) => {
           Please select the category you want to delete.
         </p>        
         <div className="d-flex justify-content-center">
-            {/* <div className="form-check d-flex flex-row flex-wrap gap-3"> */}
-            <div  style={{ minWidth: "250px" }} className="text-start">
-                {authCtx.categories.map((category) => (
-                  <div key={category.category_id} className="form-check mb-2">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      id={`check-${category.category_id}`}
-                      value={category.category_name}
-                      onChange={nameHandler}
-                      onBlur={validateNameHandler}
-                    />
-                    <label
-                      className="form-check-label justify-content-start"
-                      htmlFor={`check-${category.category_id}`}
-                    >
-                      {category.description}
-                    </label>
-                  </div>
-                ))}
+          {/* <div className="form-check d-flex flex-row flex-wrap gap-3"> */}
+          <div  style={{ minWidth: "250px" }} className="text-start">
+            {authCtx.categories.map((category) => (
+              <div key={category.category_id} className="form-check mb-2">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id={`check-${category.category_id}`}
+                  value={category.category_name}
+                  onChange={nameHandler}
+                  onBlur={validateNameHandler}
+                />
+                <label
+                  className="form-check-label justify-content-start"
+                  htmlFor={`check-${category.category_id}`}
+                >
+                  {category.description}
+                </label>
+              </div>
+            ))}
           </div>
         </div>
       </div>

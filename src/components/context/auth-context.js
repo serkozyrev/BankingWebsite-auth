@@ -54,6 +54,7 @@ export const AuthContextProvider = (props) => {
   const [infoAnalysisLineOfCredit, setInfoAnalysisLineOfCredit] = useState([]);
   const [info, setInfo] = useState([]);
   const [categories, setCategories] = useState([])
+  const [accountSelection, setAccountSelection] = useState([])
   const [categoryModalPopUpWindow, setCategoryModalPopUpWindow] = useState(false);
   const [categoryMessagePopUpWindow, setCategoryMessagePopUpWindow] = useState(false);
   const [accountCreationModalPopUpWindow, setAccountCreationModalPopUpWindow] = useState(false);
@@ -303,6 +304,7 @@ export const AuthContextProvider = (props) => {
     setInfoAnalysisMine([])
     setInfoAnalysisLineOfCredit([])
     setCategories([])
+    setAccountSelection([])
   },[])
   
   const login = useCallback((token,uid, authTokenType, username, expirationDate)=>{
@@ -428,6 +430,8 @@ export const AuthContextProvider = (props) => {
   };
 
   const contextValue = {
+    accountSelection,
+    setAccountSelection,
     info,
     setInfo,
     setSearchListExpenses,

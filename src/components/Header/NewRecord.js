@@ -165,19 +165,19 @@ const NewRecord = (props) => {
     setValidAccount(providedAccount !== "");
   };
   // console.log("providedCategory", providedCategory)
-  const allAccounts = authCtx.accounts || [];
+  // const allAccounts = authCtx.accounts || [];
 
-  const selectedAccount = allAccounts.find(
-    (account) => String(account.id) === String(providedAccount)
-  );
+  // const selectedAccount = allAccounts.find(
+  //   (account) => String(account.id) === String(providedAccount)
+  // );
 
-  const transferTargetAccounts = allAccounts.filter(
-    (account) => String(account.id) !== String(providedAccount)
-  );
+  // const transferTargetAccounts = allAccounts.filter(
+  //   (account) => String(account.id) !== String(providedAccount)
+  // );
 
-  const revenueAccounts = allAccounts.filter((account) =>
-    account.description?.toLowerCase().includes("chequing")
-  );
+  // const revenueAccounts = allAccounts.filter((account) =>
+  //   account.description?.toLowerCase().includes("chequing")
+  // );
   
     const isAIDisabled = !providedAIDescription
   

@@ -103,23 +103,11 @@ const Account = (props) => {
   };
   return (
     <div className="account-container">
-      <div className="date">
+      {/* <div className="date"> */}
+      <div className="d-flex flex-column flex-start">
         <AccountDate />
-        <div className="currency-expense">
-          Chequing expenses for this month CAD {authCtx.expenseTotalPapa.toLocaleString("en-CA", {
-            style: "currency",
-            currency: "CAD",
-          })}
-        </div>
         <div className="currency">
           1 {changeFrom.toLowerCase()} - {currencyRate} {changeTo.toLowerCase()}{" "}
-        </div>
-
-        <div className="currency-expense">
-          Visa Expenses for this month CAD {authCtx.expenseTotalDina.toLocaleString("en-CA", {
-            style: "currency",
-            currency: "CAD",
-          })}
         </div>
         <div className="select-currency">
           <form onSubmit={submitHandler}>
@@ -154,26 +142,28 @@ const Account = (props) => {
             </div>
           </form>
         </div>
-        <div className="currency-expense">
-          Line of Credit expenses this month CAD {authCtx.expenseTotalSnezhana.toLocaleString("en-CA", {
-            style: "currency",
-            currency: "CAD",
-          })}
-        </div>
       </div>
       {authCtx.accounts.length > 0 ? (
         authCtx.accounts.map((account) => (
-          <Card className="account-item" key={account.id} id={account.id}>
-            <div className="account-item__description">
-              <h2 className="account-item h2">{account.description}</h2>
-              <div className="account-item__price">
-                CAD {account.amount.toLocaleString("en-CA", {
-                style: "currency",
-                currency: "CAD",
-              })}
+          <div key={account.id}>
+            <Card className="account-item" id={`account-${account.id}`}>
+              <div className="account-item__description">
+                <h2 className="account-item h2">{account.description}</h2>
+                <div className="account-item__price">
+                  CAD {account.amount.toLocaleString("en-CA", {
+                  style: "currency",
+                  currency: "CAD",
+                })}
+                </div>
               </div>
+            </Card>
+            <div className="currency-expense" id={`account-${account.id}`}>
+                {account.description} expenses this month CAD {account.currentMonthTotal.toLocaleString("en-CA", {
+                  style: "currency",
+                  currency: "CAD",
+                })}
             </div>
-          </Card>
+          </div>
         ))
       ) : (
         <p>No accounts found.</p>
