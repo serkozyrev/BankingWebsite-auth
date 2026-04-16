@@ -118,7 +118,7 @@ const Header = (props) => {
                 onClick={newAccountCreationHandler}
                 className="forgot_pass d-flex justify-content-start"
               >
-                Accountы
+                Accounts
               </Nav.Link>
             </Nav>
           <Search /></>)
