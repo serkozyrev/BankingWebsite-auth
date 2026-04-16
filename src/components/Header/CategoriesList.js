@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 
 import AuthContext from "../context/auth-context";
 import Button from "../UI/Button/Button";
@@ -37,7 +37,7 @@ const CategoriesList = (props) => {
   };
 
 
-  const hostAllCategories= async(requestPostOptions)=>{
+  const hostAllCategories= useCallback(async(requestPostOptions)=>{
     try{
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/categories/all`, requestPostOptions)
       
@@ -46,12 +46,12 @@ const CategoriesList = (props) => {
             throw new Error(err?.detail || "Failed to add record")
         }
         const data = await res.json()
-        // console.log("data", data)
+        console.log("data", data)
           authCtx.setCategories(data)
       }catch(e){
         console.log(e)
     }   
-  }
+  },[])
   useEffect(() => {
     const myHeaders= new Headers()
     myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
@@ -61,16 +61,9 @@ const CategoriesList = (props) => {
     }
     
     hostAllCategories(requestOptions)
-  },[authCtx.authToken])
-
-  useEffect(()=>{
-    if(!categoryDeletionApproved) return
-
-    submitHandler()
-    
-  },[categoryDeletionApproved])
+  },[authCtx.authToken, hostAllCategories])  
   
-  const submitHandler = async(event) => {
+  const submitHandler = useCallback(async(event) => {
     event?.preventDefault();
 
     const myHeaders= new Headers()
@@ -114,8 +107,14 @@ const CategoriesList = (props) => {
     }catch(e){
         console.log(e)
     }    
-  };
+  },[])
   
+  useEffect(()=>{
+    if(!categoryDeletionApproved) return
+
+    submitHandler()
+    
+  },[categoryDeletionApproved, submitHandler])
 
   const isDisabled = providedName.length === 0
   return (

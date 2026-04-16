@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 
 import AuthContext from "../context/auth-context";
 import Button from "../UI/Button/Button";
@@ -34,16 +34,9 @@ const AccountCreation = (props) => {
   const accountCreationConfirmationHandler = () => {
     setAccountCreationApproved(true);
     authCtx.closeConfirmAccountCreationMessage()
-  };
-
-  useEffect(()=>{
-    if(!accountCreationApproved) return
-
-    submitHandler()
-    
-  },[accountCreationApproved])
+  };  
   
-  const submitHandler = async(event) => {
+  const submitHandler = useCallback(async(event) => {
     event?.preventDefault();
 
     const myHeaders= new Headers()
@@ -79,8 +72,14 @@ const AccountCreation = (props) => {
     }catch(e){
         console.log(e)
     }    
-};
+  },[props, providedAccountDescription, providedAccountKind])
   
+  useEffect(()=>{
+    if(!accountCreationApproved) return
+
+    submitHandler()
+    
+  },[accountCreationApproved, submitHandler])
 
   const isDisabled = providedAccountDescription.length === 0 || providedAccountKind === ""
   return (

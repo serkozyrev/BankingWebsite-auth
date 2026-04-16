@@ -134,7 +134,7 @@ const EditRecord = (props) => {
       } catch (err) {}
     };
     fetchPlace();
-  }, [recordId]);
+  }, [recordId, authCtx.authToken]);
 
   const submitHandler = async (event) => {
     event.preventDefault();
