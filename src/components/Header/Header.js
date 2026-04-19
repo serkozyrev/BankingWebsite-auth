@@ -108,6 +108,13 @@ const Header = (props) => {
               </Nav.Link>
               <Nav.Link
                 type="button"
+                href="/graphs "
+                className="forgot_pass d-flex justify-content-start"
+              >
+                Graphs
+              </Nav.Link>
+              <Nav.Link
+                type="button"
                 onClick={newCategoryRecordHandler}
                 className="forgot_pass d-flex justify-content-start"
               >

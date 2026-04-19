@@ -182,9 +182,9 @@ export const AuthContextProvider = (props) => {
         const myHeaders= new Headers()
         myHeaders.append('Authorization', 'Bearer ' + authToken)
         const requestOptions={
-              method:'GET',
-              headers:myHeaders
-          }
+          method:'GET',
+          headers:myHeaders
+        }
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/expense/all`, requestOptions
         );

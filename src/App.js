@@ -12,6 +12,9 @@ const EditRecord = React.lazy(() => import("./components/Website/EditRecord"));
 const Analytics = React.lazy(() =>
   import("./components/Website/Analytics/Analytics")
 );
+const Graphs = React.lazy(() =>
+  import("./components/Website/Analytics/Graphs")
+);
 
 const App = () => {
   return (
@@ -27,6 +30,7 @@ const App = () => {
         <Route exact path="/" element={<ExpensesWebsite />} />
         <Route path="/edit/:rid" element={<EditRecord />} />
         <Route path="analysis" element={<Analytics />}  />
+        <Route path="graphs" element={<Graphs />}  />
       </Routes>
     </Suspense>
   );
