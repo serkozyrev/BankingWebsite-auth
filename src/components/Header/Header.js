@@ -99,19 +99,19 @@ const Header = (props) => {
               >
                 New Record
               </Nav.Link>
-              <Nav.Link
+              {/* <Nav.Link
                 type="button"
                 href="/analysis"
                 className="forgot_pass d-flex justify-content-start"
               >
                 Analytics
-              </Nav.Link>
+              </Nav.Link> */}
               <Nav.Link
                 type="button"
                 href="/graphs "
                 className="forgot_pass d-flex justify-content-start"
               >
-                Graphs
+                Analytics
               </Nav.Link>
               <Nav.Link
                 type="button"

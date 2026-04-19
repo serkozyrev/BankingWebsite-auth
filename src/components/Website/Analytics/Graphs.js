@@ -252,9 +252,9 @@ export default function ExpenseChartsPage() {
       {/* ── header + filters ── */}
       <div className="headerRow">
         <div className="headerTitle">
-          <h1 className="title">Expense Analytics</h1>
+          <h1 className="title">Analytics</h1>
           <p className="subtitle">
-            Monthly spend by category · yearly totals · full expense list
+            Income - Monthly spend by category - yearly totals - full expense list
           </p>
         </div>
 
