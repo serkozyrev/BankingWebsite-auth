@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -56,6 +56,8 @@ export default function ExpenseChartsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentPages, setCurrentPages] = useState([])
+  const ITEMS_PER_PAGE = 20
 
   // ── fetch ──────────────────────────────────────────────────────────────────
 
@@ -177,7 +179,7 @@ export default function ExpenseChartsPage() {
       (item) => item.transactionType.toLowerCase() === selectedTransactionType
     );
   }, [filteredByYear, selectedTransactionType]);
-
+  
   // ── derived: monthly bar chart data (stacked by category) ─────────────────
 
   const monthlyCategoryData = useMemo(() => {
@@ -239,6 +241,44 @@ export default function ExpenseChartsPage() {
       .sort((a, b) => b.date - a.date);
   }, [filteredByType, searchTerm]);
 
+  const getCurrentPage = useCallback((accountId)=>{return currentPages[accountId] || 1},[currentPages])
+
+  const getTotalPages=(expenses)=>{
+    return expenses?.length ? Math.ceil(expenses.length/ITEMS_PER_PAGE) : 1
+  }
+
+  const getPaginatedExpenses = useCallback((accountId, expenses)=>{
+    const currentPage = getCurrentPage(accountId)
+    const startIndex = (currentPage-1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + ITEMS_PER_PAGE
+    return expenses.slice(startIndex, endIndex)
+  },[getCurrentPage])
+
+  const prevPageHandler = (accountId)=>{
+    setCurrentPages((prev)=>({
+      ...prev,
+      [accountId]:Math.max((prev[accountId] || 1) -1,1)
+    }))
+  }
+
+  const nextPageHandler = (accountId, totalPages) => {
+    setCurrentPages((prev) => ({
+      ...prev,
+      [accountId]: Math.min((prev[accountId] || 1) + 1, totalPages),
+    }));
+  };
+
+  useEffect(() => {       
+      setCurrentPages({expenseList:1});
+    }, [expenseList]);
+
+  const paginatedExpenseList = useMemo(
+    () => getPaginatedExpenses("expenseList", expenseList),
+    [expenseList, getPaginatedExpenses]
+  );
+
+  const expenseListTotalPages = getTotalPages(expenseList);
+  const expenseListCurrentPage = getCurrentPage("expenseList");
   // ── loading / error states ─────────────────────────────────────────────────
 
   if (loading) return <div className="centeredMessage">Loading charts…</div>;
@@ -460,7 +500,7 @@ export default function ExpenseChartsPage() {
         <div className="listHeader">
           <h2 className="sectionTitle">
             Expense list
-            <span className="badge">{expenseList.length}</span>
+            <span className="badge">{paginatedExpenseList.length}</span>
           </h2>
           <input
             type="text"
@@ -472,7 +512,7 @@ export default function ExpenseChartsPage() {
         </div>
 
         <div className="expenseTableWrapper">
-          {expenseList.length === 0 ? (
+          {paginatedExpenseList.length === 0 ? (
             <p className="emptyState">No expenses match your search.</p>
           ) : (
             <table className="dataTable">
@@ -487,7 +527,7 @@ export default function ExpenseChartsPage() {
                 </tr>
               </thead>
               <tbody>
-                {expenseList.map((expense) => (
+                {paginatedExpenseList.map((expense) => (
                   <tr key={expense.id}>
                     <td className="dateCell">
                       {expense.date.toLocaleDateString("en-CA")}
@@ -503,9 +543,32 @@ export default function ExpenseChartsPage() {
                     </td>
                   </tr>
                 ))}
+                
+                
               </tbody>
-            </table>
-          )}
+            </table>)}
+            {expenseListTotalPages > 1 && (
+              <div className="ds-pagination">
+                <button
+                  className="ds-page-btn"
+                  onClick={() => prevPageHandler("expenseList")}
+                  disabled={expenseListCurrentPage === 1}
+                >
+                  ← Prev
+                </button>
+                <span className="ds-page-info">
+                  Page {expenseListCurrentPage} of {expenseListTotalPages}
+                </span>
+                <button
+                  className="ds-page-btn"
+                  onClick={() => nextPageHandler("expenseList", expenseListTotalPages)}
+                  disabled={expenseListCurrentPage === expenseListTotalPages}
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          
         </div>
       </div>
     </div>
