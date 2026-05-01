@@ -73,7 +73,7 @@ const AccountCreation = (props) => {
             throw new Error(err?.detail || "Failed to add record")
         }
         const data = await res.json()
-        console.log("data", data)
+        // console.log("data", data)
         // authCtx.setAccounts(data)
         authCtx.setAccountSelection(data)
         // setProvidedAccountID([])

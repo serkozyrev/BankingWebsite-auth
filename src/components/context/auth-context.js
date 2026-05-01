@@ -59,6 +59,8 @@ export const AuthContextProvider = (props) => {
   const [categoryMessagePopUpWindow, setCategoryMessagePopUpWindow] = useState(false);
   const [accountCreationModalPopUpWindow, setAccountCreationModalPopUpWindow] = useState(false);
   const [accountCreationMessagePopUpWindow, setAccountCreationMessagePopUpWindow] = useState(false);
+  const [dontShowSignInWindow, setDontShowSignInWindow] = useState(false);
+  const [ShowSignInWindow, setShowSignInWindow] = useState(false);
   
 
   // const rateHandler = (data) => {
@@ -110,6 +112,7 @@ export const AuthContextProvider = (props) => {
   
   const showSignInHandler = () => {
     setOpenSignIn(!openSignIn);
+    setShowSignInWindow(!ShowSignInWindow)
   }
 
   const showSignUpHandler = () => {
@@ -245,7 +248,14 @@ export const AuthContextProvider = (props) => {
       setUsername("");
       setPassword("");
       setEmail("");
-      showSignInHandler()
+      if(dontShowSignInWindow){
+        console.log('test')
+        showSignInHandler()
+      }
+
+      if(openSignIn){
+        showSignInHandler()
+      }
     } catch (error) {
       console.log(error);
       alert(error.message || "Login failed");
@@ -272,7 +282,11 @@ export const AuthContextProvider = (props) => {
       if(!response.ok){
         throw new Error(result.detail)
       }
-      signIn()  
+      setDontShowSignInWindow(true)
+      console.log('signup', openSignIn)
+      showSignUpHandler()
+      signIn()
+
     }catch(e){
       alert(e.message)
     }
@@ -305,6 +319,7 @@ export const AuthContextProvider = (props) => {
     setInfoAnalysisLineOfCredit([])
     setCategories([])
     setAccountSelection([])
+    setDontShowSignInWindow(false)
   },[])
   
   const login = useCallback((token,uid, authTokenType, username, expirationDate)=>{
