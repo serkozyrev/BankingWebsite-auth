@@ -249,7 +249,7 @@ export const AuthContextProvider = (props) => {
       setPassword("");
       setEmail("");
       if(dontShowSignInWindow){
-        console.log('test')
+        // console.log('test')
         showSignInHandler()
       }
 
@@ -283,7 +283,7 @@ export const AuthContextProvider = (props) => {
         throw new Error(result.detail)
       }
       setDontShowSignInWindow(true)
-      console.log('signup', openSignIn)
+      // console.log('signup', openSignIn)
       showSignUpHandler()
       signIn()
 
