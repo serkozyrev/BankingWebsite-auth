@@ -24,7 +24,8 @@ const NewRecord = (props) => {
   const [providedTargetAccountId, setProvidedTargetAccountId] = useState("");
   const [validatedTargetAccount, setValidTargetAccount] = useState();
 
-  const [isChecked, setIsChecked] = useState(false)
+  const [isAiChecked, setIsAiChecked] = useState(false)
+  const [isManualChecked, setIsManualChecked] = useState(false)
 
   
   const [providedCategoryDescription, setProvidedCategoryDescription] = useState("");
@@ -98,8 +99,12 @@ const NewRecord = (props) => {
       setProvidedCategoryDescription("")
   }
 
-  const handleIsChecked = ()=>{
-    setIsChecked(!isChecked)
+  const handleIsAiChecked = ()=>{
+    setIsAiChecked(!isAiChecked)
+  }
+
+  const handleIsManualChecked = ()=>{
+    setIsManualChecked(!isManualChecked)
   }
 
   const targetAccountHandler = (event) => {
@@ -193,7 +198,7 @@ const NewRecord = (props) => {
     const myHeaders= new Headers()
     myHeaders.append('Authorization', 'Bearer ' + authCtx.authToken)
     myHeaders.append('Content-Type','application/json')
-    if(isChecked){
+    if(isAiChecked){
       const requestAIOptions={
         method: "POST",
         headers: myHeaders,
@@ -226,7 +231,8 @@ const NewRecord = (props) => {
       }catch(e){
         console.log(e)
       }
-    }else{
+    }
+    if(isManualChecked){
       const requestPostOptions={
         method: "POST",
         headers: myHeaders,
@@ -293,22 +299,39 @@ const NewRecord = (props) => {
           You can also check the box and write request to AI to create a record for you.
           eg. "create income record for transfer from chequing to visa 115.26 with today date"
         </p>
+        <div className="d-flex justify-content-center flex-row">
+        <div className="d-flex justify-content-center">
+          <div className="form-check manualEntry">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="flexCheckDefault"
+              value={isManualChecked}
+              checked={isManualChecked}
+              onChange={handleIsManualChecked}
+            />
+            <label className="form-check-label" htmlFor="flexCheckDefault">
+              Use manual entry
+            </label>
+          </div>
+        </div>
         <div className="d-flex justify-content-center">
           <div className="form-check">
             <input
               type="checkbox"
               className="form-check-input"
-              id="flexCheckDefault"
-              value={isChecked}
-              checked={isChecked}
-              onChange={handleIsChecked}
+              id="flexCheckAiDefault"
+              value={isAiChecked}
+              checked={isAiChecked}
+              onChange={handleIsAiChecked}
             />
-            <label className="form-check-label" htmlFor="flexCheckDefault">
-              {isChecked ? "Using AI":"Using manual entry"}
+            <label className="form-check-label" htmlFor="flexCheckAiDefault">
+              Use AI
             </label>
           </div>
         </div>
-        {!isChecked && (<div className="d-flex justify-content-center">
+        </div>
+        {isManualChecked && (<div className="d-flex justify-content-center">
           <div className="col-8 mb-4 mt-3">
             <div
               className={`control ${
@@ -785,7 +808,7 @@ const NewRecord = (props) => {
           </div>
         </div>
         )}
-        {isChecked &&(
+        {isAiChecked &&(
           <div className="d-flex justify-content-center">
             <div className="col-8 mb-4 mt-3">
               <div
@@ -813,12 +836,12 @@ const NewRecord = (props) => {
             </div>
           </div>)}
       </div>
-      {!isChecked&&(<div className="mb-5 d-flex justify-content-center">
+      {isManualChecked&&(<div className="mb-5 d-flex justify-content-center">
         <Button type="submit" className={`btn login mb-4 ${isDisabled ? "disabled-btn" : ""}`} disabled={isDisabled}>
           Save
         </Button>
       </div>)}
-      {isChecked&&(<div className="mb-5 d-flex justify-content-center">
+      {isAiChecked&&(<div className="mb-5 d-flex justify-content-center">
         <Button type="submit" className={`btn login mb-4 ${isDisabled ? "disabled-btn" : ""}`} disabled={isAIDisabled}>
           Save
         </Button>

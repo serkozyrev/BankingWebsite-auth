@@ -111,7 +111,7 @@ const Header = (props) => {
                 href="/graphs "
                 className="forgot_pass d-flex justify-content-start"
               >
-                Analytics
+                Reports
               </Nav.Link>
               <Nav.Link
                 type="button"
